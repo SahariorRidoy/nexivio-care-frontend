@@ -20,7 +20,7 @@
 
   /* Nav — Dark navy blue (exact nav bar color from reference) */
   --color-nav-DEFAULT: #0C2468;
-  --color-nav-active:  #071a4e;
+  --color-nav-active:  #43a047;
   --color-nav-hover:   #163080;
 
   /* Navy — Dark blue for text/headings */
@@ -40,7 +40,7 @@
 @layer utilities {
   .animate-marquee { animation: marquee 20s linear infinite; }
   .bg-nav { background-color: #0C2468; }
-  .bg-nav-active { background-color: #071a4e; }
+  .bg-nav-active { background-color: #43a047; }
   .hover\:bg-nav-hover:hover { background-color: #163080; }
 }
 

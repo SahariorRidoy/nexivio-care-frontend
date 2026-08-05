@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import type { Service } from "@/types";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X, Phone, MessageCircle, Mail, ChevronDown } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -13,29 +14,9 @@ import LanguageSwitch from "@/components/shared/LanguageSwitch";
 
 
 
-/* ── Nexivio Care Logo Icon (leaf + medical cross) ── */
-function LogoIcon({ size = 48 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 48 48" width={size} height={size} fill="none">
-      {/* Outer circle */}
-      <circle cx="24" cy="24" r="23" fill="#2e7d32" />
-      {/* Leaf / teardrop shape */}
-      <path
-        d="M24 6 C15 6 9 13 9 20 C9 31 24 42 24 42 C24 42 39 31 39 20 C39 13 33 6 24 6Z"
-        fill="white" opacity="0.15"
-      />
-      {/* White cross (medical) */}
-      <rect x="21" y="14" width="6" height="20" rx="2" fill="white" />
-      <rect x="14" y="21" width="20" height="6" rx="2" fill="white" />
-      {/* Small leaves around icon */}
-      <path d="M12 10 C10 8 8 12 10 14 C12 16 14 13 12 10Z" fill="white" opacity="0.5" />
-      <path d="M36 10 C38 8 40 12 38 14 C36 16 34 13 36 10Z" fill="white" opacity="0.5" />
-    </svg>
-  );
-}
-
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [otherServicesOpen, setOtherServicesOpen] = useState(false);
   const [trainingOpen, setTrainingOpen] = useState(false);
@@ -73,14 +54,17 @@ export default function Header() {
     label: language === "en" ? tr.titleEn : tr.titleBn,
   }));
 
+  const isBn = language === "bn";
+
   const navLinks = [
     { href: "/",              label: t.nav.home },
-    { href: "/about",         label: t.nav.about },
+    { href: "/about",         label: t.nav.about, megaAbout: true },
     { href: "/services",      label: t.nav.services, children: serviceChildren },
     { href: "/other-services", label: language === "en" ? "Other Services" : "অন্যান্য সেবা", children: otherServiceChildren },
     { href: "/training",      label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
     { href: "/job-application", label: t.jobApplication.title },
     { href: "/notice-board",  label: t.nav.noticeBoard },
+    { href: "/gallery",       label: t.nav.gallery },
     { href: "/contact",       label: t.nav.contact },
   ];
 
@@ -94,7 +78,7 @@ export default function Header() {
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              <LogoIcon size={52} />
+              <Image src="/logo.jpeg" alt="Nexivio Care" width={56} height={56} className="object-contain" priority />
               <div className="leading-tight">
                 <div className="text-xl font-bold text-gray-900">
                   <span className="text-primary-800">Nexivio</span>
@@ -167,6 +151,83 @@ export default function Header() {
               const isActive = link.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(link.href);
+              if ("megaAbout" in link && link.megaAbout) {
+                return (
+                  <div key={link.href} className="relative group h-full flex items-center">
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
+                        isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
+                      )}
+                    >
+                      {link.label} <ChevronDown size={13} />
+                    </Link>
+                    {/* Mega dropdown */}
+                    <div className="absolute top-full left-0 z-50 hidden group-hover:flex bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[480px]">
+                      {/* Left — About sections */}
+                      <div className="w-1/2 p-5 border-r border-slate-100">
+                        <p className="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">
+                          {isBn ? "আমাদের সম্পর্কে" : "About Us"}
+                        </p>
+                        <div className="space-y-1">
+                          {[
+                            { href: "/about#profile",     label: isBn ? "কোম্পানি প্রোফাইল"   : "Company Profile" },
+                            { href: "/about#mission",     label: isBn ? "আমাদের মিশন"        : "Our Mission" },
+                            { href: "/about#vision",      label: isBn ? "আমাদের ভিশন"        : "Our Vision" },
+                            { href: "/about#future-plan", label: isBn ? "ভবিষ্যৎ পরিকল্পনা" : "Our Future Plan" },
+                            { href: "/about#office",      label: isBn ? "আমাদের অফিস"        : "Our Office" },
+                            
+                          ].map(item => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Right — Human Resources + Notice Board */}
+                      <div className="w-1/2 p-5">
+                        <p className="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">
+                          {isBn ? "মানব সম্পদ" : "Human Resources"}
+                        </p>
+                        <div className="space-y-1">
+                          {[
+                            { href: "/about#team",      label: isBn ? "ম্যানেজমেন্ট টিম" : "Management Team" },
+                            { href: "/about#staff",     label: isBn ? "আমাদের কর্মীবৃন্দ" : "Our Staff" },
+                            { href: "/job-application", label: isBn ? "চাকরির আবেদন" : "Job Application" },
+                          ].map(item => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                        <p className="text-xs font-bold tracking-widest uppercase text-primary-600 mt-4 mb-3">
+                          {isBn ? "নোটিশ বোর্ড" : "Notice Board"}
+                        </p>
+                        <div className="space-y-1">
+                          <Link
+                            href="/notice-board"
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+                            {isBn ? "নোটিশ বোর্ড" : "Notice Board"}
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
               if (link.children) {
                 return (
                   <div key={link.href} className="relative group h-full flex items-center">
@@ -232,6 +293,43 @@ export default function Header() {
               const isActive = link.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(link.href);
+              if ("megaAbout" in link && link.megaAbout) {
+                return (
+                  <div key={link.href}>
+                    <button
+                      onClick={() => setAboutOpen(v => !v)}
+                      className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
+                    >
+                      {link.label}
+                      <ChevronDown size={14} className={cn("transition-transform", aboutOpen && "rotate-180")} />
+                    </button>
+                    {aboutOpen && (
+                      <div className="bg-nav-active pl-4">
+                        {[
+                          { href: "/about#profile",     label: isBn ? "কোম্পানি প্রোফাইল"   : "Company Profile" },
+                          { href: "/about#mission",     label: isBn ? "আমাদের মিশন"        : "Our Mission" },
+                          { href: "/about#vision",      label: isBn ? "আমাদের ভিশন"        : "Our Vision" },
+                          { href: "/about#future-plan", label: isBn ? "ভবিষ্যৎ পরিকল্পনা" : "Our Future Plan" },
+                          { href: "/about#office",      label: isBn ? "আমাদের অফিস"        : "Our Office" },
+                          { href: "/about#team",        label: isBn ? "ম্যানেজমেন্ট টিম"   : "Management Team" },
+                          { href: "/about#staff",       label: isBn ? "আমাদের কর্মীবৃন্দ"  : "Our Staff" },
+                          { href: "/job-application",   label: isBn ? "চাকরির আবেদন"       : "Job Application" },
+                          { href: "/notice-board",      label: isBn ? "নোটিশ বোর্ড"        : "Notice Board" },
+                        ].map(item => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
               if (link.children) {
                 return (
                   <div key={link.href}>

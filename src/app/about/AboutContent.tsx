@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, CheckCircle2, Target, TrendingUp } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { ChevronLeft, ChevronRight, CheckCircle2, Target, TrendingUp, MapPin } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 
@@ -116,7 +116,7 @@ export default function AboutContent() {
       </section>
 
       {/* ── Mission — text left, image right ───────────────────────────── */}
-      <section className="py-20" style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%)" }}>
+      <section id="mission" className="py-20" style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%)" }}>
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -153,7 +153,7 @@ export default function AboutContent() {
       </section>
 
       {/* ── Vision — image left, text right ────────────────────────────── */}
-      <section className="bg-white py-20">
+      <section id="vision" className="bg-white py-20">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative order-2 lg:order-1">
@@ -197,7 +197,7 @@ export default function AboutContent() {
       </section>
 
       {/* ── Goals & Future Plans ────────────────────────────────────────── */}
-      <section className="py-20" style={{ background: "linear-gradient(135deg, #0C2468 0%, #163080 100%)" }}>
+      <section id="future-plan" className="py-20" style={{ background: "linear-gradient(135deg, #0C2468 0%, #163080 100%)" }}>
         <div className="container mx-auto max-w-6xl px-4">
           <div className="text-center mb-12">
             {/* <span className="inline-block mb-3 text-xs font-semibold tracking-widest uppercase text-blue-300">
@@ -278,8 +278,55 @@ export default function AboutContent() {
         </div>
       </section>
 
+      {/* ── Office Address & Map ─────────────────────────────────────────── */}
+      <section id="office" className="py-20" style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%)" }}>
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold" style={{ color: "#0C2468" }}>
+              {isBn ? "আমাদের অফিস" : "Find Our Office"}
+            </h2>
+            <div className="mt-4 h-0.5 w-12 rounded-full bg-primary-500 mx-auto" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            {/* Left — contact info cards */}
+            <div className="flex flex-col gap-4 justify-center">
+              {([
+                { icon: <MapPin size={20} className="text-white" />, label: isBn ? "অফিস ঠিকানা" : "Office Address", value: s.address, bg: "bg-primary-600" },
+                { icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন" : "Phone", value: s.phone, bg: "bg-green-600" },
+                { icon: <span className="text-white text-base">✉️</span>, label: isBn ? "ইমেইল" : "Email", value: s.email, bg: "bg-sky-600" },
+                ...(s.businessHours ? [{ icon: <span className="text-white text-base">🕐</span>, label: isBn ? "অফিস সময়" : "Business Hours", value: s.businessHours, bg: "bg-amber-500" }] : []),
+              ] as { icon: React.ReactNode; label: string; value: string; bg: string }[]).map(({ icon, label, value, bg }) => (
+                <div key={label} className="flex items-start gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                  <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
+                    {icon}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-0.5">{label}</p>
+                    <p className="text-slate-800 font-medium text-base">{value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Right — map embed */}
+            <div className="rounded-2xl overflow-hidden shadow-xl border border-slate-100" style={{ minHeight: "380px" }}>
+              <iframe
+                src={s.mapEmbedUrl ?? `https://maps.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ minHeight: "380px", border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Management Team ─────────────────────────────────────────────── */}
-      <section className="bg-white py-20">
+      <section id="team" className="bg-white py-20">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="text-center mb-12">
             {/* <span className="inline-block mb-3 text-xs font-semibold tracking-widest uppercase text-primary-600">
@@ -337,7 +384,7 @@ export default function AboutContent() {
 
       {/* ── Our Staff ───────────────────────────────────────────────────── */}
       {staff.length > 0 && (
-        <section className="py-20" style={{ background: "#f8faff" }}>
+        <section id="staff" className="py-20" style={{ background: "#f8faff" }}>
           <div className="container mx-auto max-w-6xl px-4">
             <div className="text-center mb-12">
               {/* <span className="inline-block mb-3 text-xs font-semibold tracking-widest uppercase text-primary-600">

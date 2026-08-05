@@ -8,6 +8,7 @@ import { CheckCircle, Phone, Clock, ShieldCheck, Star, CalendarDays, MapPin, Cre
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { api } from "@/lib/api";
+import toast from "react-hot-toast";
 import type { Service, OtherService, ServicePackage } from "@/types";
 import PageHeader from "@/components/shared/PageHeader";
 import Input from "@/components/ui/Input";
@@ -22,6 +23,9 @@ const schema = z.object({
   name: z.string().min(2),
   phone: z.string().min(11),
   address: z.string().min(5),
+  patientName: z.string().min(2),
+  patientGender: z.enum(["male", "female", "other"]),
+  relationship: z.string().min(1),
   serviceType: z.string().min(1),
   packageName: z.string().optional(),
   date: z.string().min(1),
@@ -91,7 +95,7 @@ export default function BookServiceContent() {
     });
   }, [isBn]);
 
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
@@ -129,6 +133,12 @@ export default function BookServiceContent() {
       return;
     }
 
+    toast.success(isBn ? "বুকিং সফলভাবে জমা হয়েছে!" : "Booking submitted successfully!");
+    reset();
+    setSelectedPayment("");
+    setSelectedPackage(null);
+    setSelectedService("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setSubmitted(true);
   };
 
@@ -142,7 +152,7 @@ export default function BookServiceContent() {
           {isBn ? "বুকিং সফলভাবে জমা হয়েছে!" : "Booking Submitted!"}
         </h2>
         <p className="text-slate-500 max-w-sm text-sm">{t.bookService.success}</p>
-        <button onClick={() => setSubmitted(false)} className="mt-2 text-sm font-semibold underline" style={{ color: PRIMARY }}>
+        <button onClick={() => setSubmitted(false)} className="mt-2 cursor-pointer text-sm font-semibold underline" style={{ color: PRIMARY }}>
           {isBn ? "আরেকটি বুকিং করুন" : "Make another booking"}
         </button>
       </div>
@@ -217,6 +227,49 @@ export default function BookServiceContent() {
                   </div>
 
                   <Input label={f.address} required error={errors.address?.message} {...register("address")} />
+
+                  {/* Patient Info */}
+                  <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 flex flex-col gap-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: PRIMARY }}>
+                      {isBn ? "রোগীর তথ্য" : "Patient Information"}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <Input
+                        label={f.patientName}
+                        required
+                        error={errors.patientName?.message}
+                        {...register("patientName")}
+                      />
+                      <Select
+                        label={f.patientGender}
+                        required
+                        options={[
+                          { value: "male",   label: isBn ? "পুরুষ"  : "Male"   },
+                          { value: "female", label: isBn ? "মহিলা" : "Female" },
+                          { value: "other",  label: isBn ? "অন্যান্য" : "Other" },
+                        ]}
+                        placeholder={isBn ? "— লিঙ্গ —" : "— Gender —"}
+                        error={errors.patientGender?.message}
+                        {...register("patientGender")}
+                      />
+                      <Select
+                        label={f.relationship}
+                        required
+                        options={[
+                          { value: "self",    label: isBn ? "নিজে"      : "Self"        },
+                          { value: "son",     label: isBn ? "ছেলে"      : "Son"         },
+                          { value: "daughter",label: isBn ? "মেয়ে"      : "Daughter"    },
+                          { value: "spouse",  label: isBn ? "স্বামী/স্ত্রী" : "Spouse"  },
+                          { value: "parent",  label: isBn ? "বাবা/মা"   : "Parent"      },
+                          { value: "sibling", label: isBn ? "ভাই/বোন"  : "Sibling"     },
+                          { value: "other",   label: isBn ? "অন্যান্য" : "Other"        },
+                        ]}
+                        placeholder={isBn ? "— সম্পর্ক —" : "— Relationship —"}
+                        error={errors.relationship?.message}
+                        {...register("relationship")}
+                      />
+                    </div>
+                  </div>
 
                   <Select
                     label={f.serviceType}

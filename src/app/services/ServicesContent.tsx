@@ -16,8 +16,6 @@ const iconMap: Record<string, LucideIcon> = {
 
 const PRIMARY = "#0C2468";
 const ACCENT  = "#2563eb";
-
-// ─── Category config ──────────────────────────────────────────────────────────
 type CategoryKey = "all" | "nursing" | "caregiver" | "babyCare" | "elderCare" | "others";
 
 const CATEGORIES: { key: CategoryKey; labelEn: string; labelBn: string; icon: LucideIcon }[] = [

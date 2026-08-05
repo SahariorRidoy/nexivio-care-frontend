@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import PublicLayout from "@/components/layout/PublicLayout";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,6 +70,7 @@ export default function RootLayout({
         <SettingsProvider>
           <LanguageProvider>
             <PublicLayout>{children}</PublicLayout>
+            <Toaster position="top-center" />
           </LanguageProvider>
         </SettingsProvider>
       </body>
