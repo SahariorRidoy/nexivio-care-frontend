@@ -67,16 +67,89 @@ export default function Header() {
     { slug: "other-support-services",    labelEn: "Other Support Services",    labelBn: "অন্যান্য সহায়তা সেবা" },
   ];
 
-  const TRANSPORTATION_SERVICES = [
-    { slug: "transportation-services",   labelEn: "Transportation Services",   labelBn: "পরিবহন সেবা" },
-    { slug: "ambulance-service",         labelEn: "Ambulance Service",         labelBn: "অ্যাম্বুলেন্স সেবা" },
-    { slug: "hospital-visit-assistance", labelEn: "Hospital Visit Assistance", labelBn: "হাসপাতাল ভিজিট সহায়তা" },
+  // Transportation: 7 categories each with sub-vehicles
+  const TRANSPORT_CATEGORIES = [
+    {
+      slug: "local-transport",
+      labelEn: "🏙️ Local Transport",
+      labelBn: "🏙️ স্থানীয় পরিবহন",
+      href: "/transportation?cat=local",
+      vehicles: [
+        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
+        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
+        { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
+        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
+      ],
+    },
+    {
+      slug: "intercity-transport",
+      labelEn: "🛣️ Intercity Transport",
+      labelBn: "🛣️ আন্তঃনগর পরিবহন",
+      href: "/transportation?cat=intercity",
+      vehicles: [
+        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
+        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
+        { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
+        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
+      ],
+    },
+    {
+      slug: "corporate-transport",
+      labelEn: "🏢 Corporate Transport",
+      labelBn: "🏢 কর্পোরেট পরিবহন",
+      href: "/transportation?cat=corporate",
+      vehicles: [
+        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
+        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
+        { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
+        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
+      ],
+    },
+    {
+      slug: "airport-transfer",
+      labelEn: "✈️ Airport Transfer",
+      labelBn: "✈️ এয়ারপোর্ট ট্রান্সফার",
+      href: "/transportation?cat=airport",
+      vehicles: [
+        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
+        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
+        { labelEn: "🚖 Rent-a-Car",   labelBn: "🚖 রেন্ট-এ-কার",   href: "/transportation/book?type=rent-a-car" },
+        { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
+      ],
+    },
+    {
+      slug: "ambulance-service",
+      labelEn: "🚑 Ambulance Service",
+      labelBn: "🚑 অ্যাম্বুলেন্স সেবা",
+      href: "/transportation?cat=ambulance",
+      vehicles: [
+        { labelEn: "🚑 Ambulance",    labelBn: "🚑 অ্যাম্বুলেন্স",  href: "/transportation/book?type=ambulance" },
+      ],
+    },
+    {
+      slug: "goods-transportation",
+      labelEn: "📦 Goods Transportation",
+      labelBn: "📦 পণ্য পরিবহন",
+      href: "/transportation?cat=goods",
+      vehicles: [
+        { labelEn: "🚚 Pickup",       labelBn: "🚚 পিকআপ",         href: "/transportation/book?type=pickup" },
+        { labelEn: "🚛 Truck",        labelBn: "🚛 ট্রাক",          href: "/transportation/book?type=truck" },
+        { labelEn: "📦 Covered Van",  labelBn: "📦 কভার্ড ভ্যান",   href: "/transportation/book?type=covered-van" },
+      ],
+    },
+    {
+      slug: "vehicle-rental",
+      labelEn: "🚖 Vehicle Rental",
+      labelBn: "🚖 গাড়ি ভাড়া",
+      href: "/transportation?cat=rental",
+      vehicles: [
+        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
+        { labelEn: "🚖 Rent-a-Car",   labelBn: "🚖 রেন্ট-এ-কার",   href: "/transportation/book?type=rent-a-car" },
+        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
+        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
+      ],
+    },
   ];
-
-  const transportationChildren = TRANSPORTATION_SERVICES.map((sv) => ({
-    href: `/other-services/${sv.slug}`,
-    label: language === "en" ? sv.labelEn : sv.labelBn,
-  }));
 
   const dynamicSlugs = new Set(apiOtherServices.map((sv) => sv.slug));
   const otherServiceChildren = [
@@ -102,7 +175,7 @@ export default function Header() {
     { href: "/about",          label: t.nav.about, megaAbout: true },
     { href: "/services",       label: language === "en" ? "Our Services" : "আমাদের সেবা", children: serviceChildren },
     { href: "/other-services", label: language === "en" ? "Additional Services" : "অতিরিক্ত সেবা", children: otherServiceChildren },
-    { href: "/transportation",  label: language === "en" ? "Transportation" : "পরিবহন", children: transportationChildren },
+    { href: "/transportation",  label: language === "en" ? "🚐 Transportation" : "🚐 পরিবহন", megaTransport: true },
     { href: "/training",       label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
     { href: "/gallery",        label: t.nav.gallery },
     { href: "/notice-board",   label: t.nav.noticeBoard },
@@ -276,14 +349,11 @@ export default function Header() {
                       href={link.href}
                       className={cn(
                         "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
-                        isActive
-                          ? "bg-nav-active text-white"
-                          : "text-white/90 hover:bg-nav-hover hover:text-white"
+                        isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
                       )}
                     >
                       {link.label} <ChevronDown size={13} />
                     </Link>
-                    {/* Dropdown */}
                     <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-xl min-w-[220px] border-t-2 border-primary-600 rounded-b-lg py-1">
                       {link.children.map(child => (
                         <Link
@@ -295,6 +365,68 @@ export default function Header() {
                           {child.label}
                         </Link>
                       ))}
+                    </div>
+                  </div>
+                );
+              }
+              if ("megaTransport" in link && link.megaTransport) {
+                const isActive = pathname.startsWith("/transportation");
+                return (
+                  <div key={link.href} className="relative group h-full flex items-center">
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
+                        isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
+                      )}
+                    >
+                      {link.label} <ChevronDown size={13} />
+                    </Link>
+                    {/* Transport mega dropdown: 7 categories */}
+                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[240px]">
+                      <div className="py-2">
+                        <p className="text-[10px] font-bold tracking-widest uppercase text-primary-600 px-4 pt-2 pb-3">
+                          {isBn ? "🚐 পরিবহন সেবা" : "🚐 Transportation Services"}
+                        </p>
+                        {TRANSPORT_CATEGORIES.map((cat) => (
+                          <div key={cat.slug} className="group/cat relative">
+                            <Link
+                              href={cat.href}
+                              className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors"
+                            >
+                              <span>{isBn ? cat.labelBn : cat.labelEn}</span>
+                              {cat.vehicles.length > 0 && <ChevronDown size={12} className="-rotate-90 opacity-50" />}
+                            </Link>
+                            {cat.vehicles.length > 0 && (
+                              <div className="absolute left-full top-0 z-50 hidden group-hover/cat:block bg-white shadow-xl border-l-2 border-primary-400 rounded-r-lg min-w-[200px] py-2">
+                                <p className="text-[10px] font-bold tracking-widest uppercase text-primary-500 px-4 pt-1 pb-2">
+                                  {isBn ? cat.labelBn : cat.labelEn}
+                                </p>
+                                {cat.vehicles.map((v) => (
+                                  <Link
+                                    key={v.href}
+                                    href={v.href}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors"
+                                  >
+                                    <span className="w-3 h-[2px] bg-primary-300 shrink-0 rounded-full" />
+                                    {isBn ? v.labelBn : v.labelEn}
+                                  </Link>
+                                ))}
+                                <div className="border-t border-slate-100 mt-1 pt-1 px-4">
+                                  <Link href={`/transportation/book?cat=${cat.slug}`} className="text-xs font-semibold text-primary-600 hover:text-primary-800">
+                                    {isBn ? "বুক করুন →" : "Book Now →"}
+                                  </Link>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        <div className="border-t border-slate-100 mx-4 mt-2 pt-2">
+                          <Link href="/transportation/register-vehicle" className="flex items-center gap-2 text-xs font-semibold text-primary-600 hover:text-primary-800 py-1">
+                            🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
@@ -379,17 +511,16 @@ export default function Header() {
                       onClick={() => {
                         if (link.href === "/services") setServicesOpen(v => !v);
                         else if (link.href === "/other-services") setOtherServicesOpen(v => !v);
-                        else if (link.href === "/transportation") setTransportationOpen(v => !v);
                         else setTrainingOpen(v => !v);
                       }}
                       className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
                     >
                       {link.label}
                       <ChevronDown size={14} className={cn("transition-transform",
-                        (link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : link.href === "/transportation" ? transportationOpen : trainingOpen) && "rotate-180"
+                        (link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && "rotate-180"
                       )} />
                     </button>
-                    {(link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : link.href === "/transportation" ? transportationOpen : trainingOpen) && (
+                    {(link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && (
                       <div className="bg-nav-active pl-4">
                         {link.children.map(child => (
                           <Link
@@ -401,6 +532,52 @@ export default function Header() {
                             {child.label}
                           </Link>
                         ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              if ("megaTransport" in link && link.megaTransport) {
+                const isActive = pathname.startsWith("/transportation");
+                return (
+                  <div key={link.href}>
+                    <button
+                      onClick={() => setTransportationOpen(v => !v)}
+                      className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
+                    >
+                      {link.label}
+                      <ChevronDown size={14} className={cn("transition-transform", transportationOpen && "rotate-180")} />
+                    </button>
+                    {transportationOpen && (
+                      <div className="bg-nav-active pl-4">
+                        {TRANSPORT_CATEGORIES.map((cat) => (
+                          <div key={cat.slug}>
+                            <Link
+                              href={cat.href}
+                              onClick={() => setMenuOpen(false)}
+                              className="block px-4 py-2 text-sm font-semibold text-white/90 hover:text-white"
+                            >
+                              {isBn ? cat.labelBn : cat.labelEn}
+                            </Link>
+                            {cat.vehicles.map((v) => (
+                              <Link
+                                key={v.href}
+                                href={v.href}
+                                onClick={() => setMenuOpen(false)}
+                                className="block pl-6 pr-4 py-1.5 text-xs text-white/60 hover:text-white"
+                              >
+                                {isBn ? v.labelBn : v.labelEn}
+                              </Link>
+                            ))}
+                          </div>
+                        ))}
+                        <Link
+                          href="/transportation/register-vehicle"
+                          onClick={() => setMenuOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-white/70 hover:text-white border-t border-white/10 mt-1"
+                        >
+                          🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
+                        </Link>
                       </div>
                     )}
                   </div>
