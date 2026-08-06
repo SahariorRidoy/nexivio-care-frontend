@@ -51,12 +51,44 @@ const WHY_ITEMS = [
 
 type ServiceMap = Record<string, ServicePackage[]>;
 
+type ServiceGroup = {
+  groupEn: string;
+  groupBn: string;
+  items: { value: string; labelEn: string; labelBn: string }[];
+};
+
+const STATIC_SERVICE_GROUPS: ServiceGroup[] = [
+  {
+    groupEn: "Main Services",
+    groupBn: "প্রধান সেবা",
+    items: [
+      { value: "physiotherapy-rehabilitation", labelEn: "Physiotherapy & Rehabilitation", labelBn: "ফিজিওথেরাপি ও পুনর্বাসন" },
+      { value: "on-demand-nursing",            labelEn: "On-Demand Nursing",              labelBn: "অন-ডিমান্ড নার্সিং" },
+      { value: "home-diagnostics",             labelEn: "Home Diagnostics",               labelBn: "হোম ডায়াগনস্টিক্স" },
+    ],
+  },
+  {
+    groupEn: "Additional Services",
+    groupBn: "অতিরিক্ত সেবা",
+    items: [
+      { value: "doctor-consultation",       labelEn: "Doctor Consultation",         labelBn: "ডাক্তার পরামর্শ" },
+      { value: "doctor-home-visit",         labelEn: "Doctor Home Visit",           labelBn: "ডাক্তার হোম ভিজিট" },
+      { value: "medical-equipment",         labelEn: "Medical Equipment",           labelBn: "মেডিকেল সরঞ্জাম" },
+      { value: "hospital-visit-assistance", labelEn: "Hospital Visit Assistance",   labelBn: "হাসপাতাল ভিজিট সহায়তা" },
+      { value: "ambulance-service",         labelEn: "Ambulance Service",           labelBn: "অ্যাম্বুলেন্স সেবা" },
+      { value: "other-support-services",    labelEn: "Other Support Services",      labelBn: "অন্যান্য সহায়তা সেবা" },
+    ],
+  },
+];
+
+
+
 export default function BookServiceContent() {
   const { t, language } = useLanguage();
   const s = useSettings();
   const [submitted, setSubmitted] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string>("");
-  const [serviceOptions, setServiceOptions] = useState<{ value: string; label: string }[]>([]);
+  const [serviceGroups, setServiceGroups] = useState<{ label: string; options: { value: string; label: string }[] }[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [packagesMap, setPackagesMap] = useState<ServiceMap>({});
   const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(null);
@@ -70,7 +102,6 @@ export default function BookServiceContent() {
       api.get<{ data: OtherService[] }>("/other-services").catch(() => ({ data: [] as OtherService[] })),
     ]).then(([sRes, oRes]) => {
       const map: ServiceMap = {};
-      const opts: { value: string; label: string }[] = [];
 
       const parsePkgs = (raw: unknown): ServicePackage[] => {
         if (!raw) return [];
@@ -78,18 +109,39 @@ export default function BookServiceContent() {
         return arr.filter((p) => p && typeof p === "object" && "dailyPrice" in p) as ServicePackage[];
       };
 
+      const mainItems: { value: string; label: string }[] = [];
+      const additionalItems: { value: string; label: string }[] = [];
+
       sRes.data.filter((s) => s.isActive).forEach((s) => {
-        opts.push({ value: s.slug, label: isBn ? s.nameBn : s.nameEn });
+        mainItems.push({ value: s.slug, label: isBn ? s.nameBn : s.nameEn });
         const pkgs = parsePkgs(s.packages);
         if (pkgs.length) map[s.slug] = pkgs;
       });
       oRes.data.filter((s) => s.isActive).forEach((s) => {
-        opts.push({ value: s.slug, label: isBn ? s.nameBn : s.nameEn });
+        additionalItems.push({ value: s.slug, label: isBn ? s.nameBn : s.nameEn });
         const pkgs = parsePkgs(s.packages);
         if (pkgs.length) map[s.slug] = pkgs;
       });
 
-      setServiceOptions(opts);
+      const allDynamicSlugs = new Set([...mainItems, ...additionalItems].map((o) => o.value));
+
+      // Append static items that aren't already from API, into their respective groups
+      STATIC_SERVICE_GROUPS[0].items.forEach((s) => {
+        if (!allDynamicSlugs.has(s.value))
+          mainItems.push({ value: s.value, label: isBn ? s.labelBn : s.labelEn });
+      });
+      STATIC_SERVICE_GROUPS[1].items.forEach((s) => {
+        if (!allDynamicSlugs.has(s.value))
+          additionalItems.push({ value: s.value, label: isBn ? s.labelBn : s.labelEn });
+      });
+
+      const groups: { label: string; options: { value: string; label: string }[] }[] = [];
+      if (mainItems.length)
+        groups.push({ label: isBn ? "প্রধান সেবা" : "Main Services", options: mainItems });
+      if (additionalItems.length)
+        groups.push({ label: isBn ? "অতিরিক্ত সেবা" : "Additional Services", options: additionalItems });
+
+      setServiceGroups(groups);
       setPackagesMap(map);
       setServicesLoading(false);
     });
@@ -272,19 +324,33 @@ export default function BookServiceContent() {
                     </div>
                   </div>
 
-                  <Select
-                    label={f.serviceType}
-                    required
-                    options={serviceOptions}
-                    placeholder={servicesLoading ? (isBn ? "লোড হচ্ছে..." : "Loading...") : (isBn ? "— সেবা বেছে নিন —" : "— Select Service —")}
-                    disabled={servicesLoading}
-                    error={errors.serviceType?.message}
-                    {...register("serviceType")}
-                    onChange={(e) => {
-                      register("serviceType").onChange(e);
-                      setSelectedService(e.target.value);
-                    }}
-                  />
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-slate-700">
+                      {f.serviceType} <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      defaultValue=""
+                      disabled={servicesLoading}
+                      className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 transition-colors cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:bg-slate-50"
+                      {...register("serviceType")}
+                      onChange={(e) => {
+                        register("serviceType").onChange(e);
+                        setSelectedService(e.target.value);
+                      }}
+                    >
+                      <option value="" disabled>
+                        {servicesLoading ? (isBn ? "লোড হচ্ছে..." : "Loading...") : (isBn ? "— সেবা বেছে নিন —" : "— Select Service —")}
+                      </option>
+                      {serviceGroups.map((group) => (
+                        <optgroup key={group.label} label={group.label}>
+                          {group.options.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                    {errors.serviceType && <p className="text-xs text-red-500">{errors.serviceType.message}</p>}
+                  </div>
 
                   {/* Package selection */}
                   {currentPackages.length > 0 && (
