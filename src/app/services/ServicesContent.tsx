@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Stethoscope, Heart, Baby, Users, Plus, type LucideIcon } from "lucide-react";
+import { ArrowRight, Stethoscope, Heart, Baby, Users, Plus, Activity, Clock, FlaskConical, type LucideIcon } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
@@ -11,29 +11,35 @@ import Spinner from "@/components/ui/Spinner";
 import type { Service } from "@/types";
 
 const iconMap: Record<string, LucideIcon> = {
-  Stethoscope, Heart, Baby, Users, Plus,
+  Stethoscope, Heart, Baby, Users, Plus, Activity, Clock, FlaskConical,
 };
 
 const PRIMARY = "#0C2468";
 const ACCENT  = "#2563eb";
-type CategoryKey = "all" | "nursing" | "caregiver" | "babyCare" | "elderCare" | "others";
+type CategoryKey = "all" | "nursing" | "caregiver" | "babyCare" | "elderCare" | "physiotherapy" | "onDemandNursing" | "homeDiagnostics" | "others";
 
 const CATEGORIES: { key: CategoryKey; labelEn: string; labelBn: string; icon: LucideIcon }[] = [
-  { key: "all",       labelEn: "All Services",       labelBn: "সব সেবা",              icon: Plus        },
-  { key: "nursing",   labelEn: "Nursing Service",     labelBn: "নার্সিং সেবা",         icon: Stethoscope },
-  { key: "caregiver", labelEn: "Caregiver Service",   labelBn: "কেয়ারগিভার সেবা",     icon: Heart       },
-  { key: "babyCare",  labelEn: "Baby / Nanny Care",   labelBn: "বেবি / ন্যানী কেয়ার", icon: Baby        },
-  { key: "elderCare", labelEn: "Elder Care",          labelBn: "এল্ডার কেয়ার",        icon: Users       },
-  { key: "others",    labelEn: "Other Services",      labelBn: "অন্যান্য সেবা",        icon: Plus        },
+  { key: "all",             labelEn: "All Services",                    labelBn: "সব সেবা",                        icon: Plus         },
+  { key: "nursing",         labelEn: "Nursing Service",                 labelBn: "নার্সিং সেবা",                   icon: Stethoscope  },
+  { key: "caregiver",       labelEn: "Caregiver Service",               labelBn: "কেয়ারগিভার সেবা",               icon: Heart        },
+  { key: "babyCare",        labelEn: "Baby / Nanny Care",               labelBn: "বেবি / ন্যানী কেয়ার",           icon: Baby         },
+  { key: "elderCare",       labelEn: "Elder Care",                      labelBn: "এল্ডার কেয়ার",                  icon: Users        },
+  { key: "physiotherapy",   labelEn: "Physiotherapy & Rehabilitation",  labelBn: "ফিজিওথেরাপি ও পুনর্বাসন",       icon: Activity     },
+  { key: "onDemandNursing", labelEn: "On-Demand Nursing",               labelBn: "অন-ডিমান্ড নার্সিং",            icon: Clock        },
+  { key: "homeDiagnostics", labelEn: "Home Diagnostics",                labelBn: "হোম ডায়াগনস্টিক্স",             icon: FlaskConical },
+  
 ];
 
 // Slug keywords to map a service to a category
 const CATEGORY_KEYWORDS: Record<Exclude<CategoryKey, "all">, string[]> = {
-  nursing:   ["nurs", "nurse"],
-  caregiver: ["caregiver", "care-giver", "caretaker"],
-  babyCare:  ["baby", "nanny", "infant", "child"],
-  elderCare: ["elder", "old", "senior", "aged"],
-  others:    [],
+  nursing:         ["nurs", "nurse"],
+  caregiver:       ["caregiver", "care-giver", "caretaker"],
+  babyCare:        ["baby", "nanny", "infant", "child"],
+  elderCare:       ["elder", "old", "senior", "aged"],
+  physiotherapy:   ["physio", "rehabilitation", "rehab"],
+  onDemandNursing: ["on-demand", "ondemand"],
+  homeDiagnostics: ["diagnostic", "lab", "test"],
+  others:          [],
 };
 
 function detectCategory(service: Service): CategoryKey {
@@ -44,47 +50,34 @@ function detectCategory(service: Service): CategoryKey {
   return "others";
 }
 
-// ─── Fallback static services (shown when API returns nothing) ────────────────
-const FALLBACK_SERVICES: (Service & { _category: CategoryKey })[] = [
+// ─── Static services always shown after dynamic API data ─────────────────────
+const STATIC_SERVICES: (Service & { _category: CategoryKey })[] = [
   {
-    id: "1", slug: "nursing-service", icon: "Stethoscope", isActive: true, createdAt: "",
-    nameEn: "Nursing Service", nameBn: "নার্সিং সেবা",
-    shortDescEn: "Professional nursing care at home by trained nurses.",
-    shortDescBn: "প্রশিক্ষিত নার্সদের দ্বারা বাড়িতে পেশাদার নার্সিং সেবা।",
-    descriptionEn: "", descriptionBn: "", image: "", packages: [], featuresEn: [], featuresBn: [],
-    _category: "nursing",
+    id: "static-1", slug: "physiotherapy-rehabilitation", icon: "Activity", isActive: true, createdAt: "",
+    nameEn: "Physiotherapy & Rehabilitation Services", nameBn: "ফিজিওথেরাপি ও পুনর্বাসন সেবা",
+    shortDescEn: "Professional physiotherapy and rehabilitation care at home by certified therapists.",
+    shortDescBn: "সার্টিফাইড থেরাপিস্টদের দ্বারা বাড়িতে পেশাদার ফিজিওথেরাপি ও পুনর্বাসন সেবা।",
+    descriptionEn: "", descriptionBn: "",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop",
+    packages: [], featuresEn: [], featuresBn: [], _category: "physiotherapy",
   },
   {
-    id: "2", slug: "caregiver-service", icon: "Heart", isActive: true, createdAt: "",
-    nameEn: "Caregiver Service", nameBn: "কেয়ারগিভার সেবা",
-    shortDescEn: "Dedicated caregivers for daily personal care and support.",
-    shortDescBn: "দৈনন্দিন ব্যক্তিগত যত্ন ও সহায়তার জন্য নিবেদিত কেয়ারগিভার।",
-    descriptionEn: "", descriptionBn: "", image: "", packages: [], featuresEn: [], featuresBn: [],
-    _category: "caregiver",
+    id: "static-2", slug: "on-demand-nursing", icon: "Clock", isActive: true, createdAt: "",
+    nameEn: "On-Demand Nursing", nameBn: "অন-ডিমান্ড নার্সিং",
+    shortDescEn: "Flexible, on-demand nursing services available whenever you need them.",
+    shortDescBn: "যখন প্রয়োজন তখনই পাওয়া যায় এমন নমনীয় অন-ডিমান্ড নার্সিং সেবা।",
+    descriptionEn: "", descriptionBn: "",
+    image: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&auto=format&fit=crop",
+    packages: [], featuresEn: [], featuresBn: [], _category: "onDemandNursing",
   },
   {
-    id: "3", slug: "baby-nanny-care", icon: "Baby", isActive: true, createdAt: "",
-    nameEn: "Baby / Nanny Care", nameBn: "বেবি / ন্যানী কেয়ার",
-    shortDescEn: "Experienced nannies for newborns and young children.",
-    shortDescBn: "নবজাতক ও ছোট শিশুদের জন্য অভিজ্ঞ ন্যানী সেবা।",
-    descriptionEn: "", descriptionBn: "", image: "", packages: [], featuresEn: [], featuresBn: [],
-    _category: "babyCare",
-  },
-  {
-    id: "4", slug: "elder-care", icon: "Users", isActive: true, createdAt: "",
-    nameEn: "Elder Care", nameBn: "এল্ডার কেয়ার",
-    shortDescEn: "Compassionate care and support for elderly family members.",
-    shortDescBn: "বয়স্ক পরিবারের সদস্যদের জন্য সহানুভূতিশীল সেবা।",
-    descriptionEn: "", descriptionBn: "", image: "", packages: [], featuresEn: [], featuresBn: [],
-    _category: "elderCare",
-  },
-  {
-    id: "5", slug: "other-services", icon: "Plus", isActive: true, createdAt: "",
-    nameEn: "Other Services", nameBn: "অন্যান্য সেবা",
-    shortDescEn: "Additional home healthcare services tailored to your needs.",
-    shortDescBn: "আপনার প্রয়োজন অনুযায়ী অতিরিক্ত হোম হেলথকেয়ার সেবা।",
-    descriptionEn: "", descriptionBn: "", image: "", packages: [], featuresEn: [], featuresBn: [],
-    _category: "others",
+    id: "static-3", slug: "home-diagnostics", icon: "FlaskConical", isActive: true, createdAt: "",
+    nameEn: "Home Diagnostics", nameBn: "হোম ডায়াগনস্টিক্স",
+    shortDescEn: "Lab tests and diagnostic services conducted at the comfort of your home.",
+    shortDescBn: "আপনার বাড়িতে বসেই ল্যাব টেস্ট ও ডায়াগনস্টিক সেবা গ্রহণ করুন।",
+    descriptionEn: "", descriptionBn: "",
+    image: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=600&auto=format&fit=crop",
+    packages: [], featuresEn: [], featuresBn: [], _category: "homeDiagnostics",
   },
 ];
 
@@ -99,14 +92,15 @@ export default function ServicesContent() {
     api.get<{ data: Service[] }>("/services")
       .then((r) => {
         const active = r.data.filter((s) => s.isActive);
-        if (active.length === 0) {
-          setServices(FALLBACK_SERVICES);
-        } else {
-          setServices(active.map((s) => ({ ...s, _category: detectCategory(s) })));
-          setHeaderImage(active.find((s) => s.image)?.image);
-        }
+        const dynamicSlugs = new Set(active.map((s) => s.slug));
+        const merged = [
+          ...active.map((s) => ({ ...s, _category: detectCategory(s) })),
+          ...STATIC_SERVICES.filter((s) => !dynamicSlugs.has(s.slug)),
+        ];
+        setServices(merged);
+        setHeaderImage(active.find((s) => s.image)?.image);
       })
-      .catch(() => setServices(FALLBACK_SERVICES))
+      .catch(() => setServices(STATIC_SERVICES))
       .finally(() => setLoading(false));
   }, []);
 

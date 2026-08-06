@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle, Download } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -10,18 +11,6 @@ import { api } from "@/lib/api";
 import type { Service } from "@/types";
 
 
-
-function LogoIcon() {
-  return (
-    <svg viewBox="0 0 48 48" width="40" height="40" fill="none">
-      <circle cx="24" cy="24" r="23" fill="#2e7d32" />
-      <rect x="21" y="14" width="6" height="20" rx="2" fill="white" />
-      <rect x="14" y="21" width="20" height="6" rx="2" fill="white" />
-      <path d="M12 10 C10 8 8 12 10 14 C12 16 14 13 12 10Z" fill="white" opacity="0.5" />
-      <path d="M36 10 C38 8 40 12 38 14 C36 16 34 13 36 10Z" fill="white" opacity="0.5" />
-    </svg>
-  );
-}
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -55,9 +44,9 @@ export default function Footer() {
 
           {/* 1 — Brand + description + social */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-3">
-              <LogoIcon />
-              <div>
+            <Link href="/" className="flex items-center gap-3 mb-3">
+              <Image src="/logo.jpeg" alt="Nexivio Care" width={56} height={56} className="object-contain rounded-lg" />
+              <div className="leading-tight">
                 <p className="font-bold text-white text-base leading-tight">
                   <span className="text-primary-400">Nexivio</span> Care
                 </p>

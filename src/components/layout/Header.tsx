@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import type { Service } from "@/types";
+import type { Service, OtherService } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Phone, MessageCircle, Mail, ChevronDown } from "lucide-react";
@@ -20,8 +20,9 @@ export default function Header() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [otherServicesOpen, setOtherServicesOpen] = useState(false);
   const [trainingOpen, setTrainingOpen] = useState(false);
+  const [transportationOpen, setTransportationOpen] = useState(false);
   const [apiServices, setApiServices] = useState<Service[]>([]);
-  const [apiOtherServices, setApiOtherServices] = useState<Service[]>([]);
+  const [apiOtherServices, setApiOtherServices] = useState<OtherService[]>([]);
   const [apiTrainings, setApiTrainings] = useState<{ slug: string; titleEn: string; titleBn: string }[]>([]);
   const pathname = usePathname();
   const s = useSettings();
@@ -31,7 +32,7 @@ export default function Header() {
     api.get<{ data: Service[] }>("/services")
       .then((r) => setApiServices(r.data.filter((sv) => sv.isActive)))
       .catch(() => {});
-    api.get<{ data: Service[] }>("/other-services")
+    api.get<{ data: OtherService[] }>("/other-services")
       .then((r) => setApiOtherServices(r.data.filter((sv) => sv.isActive)))
       .catch(() => {});
     api.get<{ data: { slug: string; titleEn: string; titleBn: string; isActive: boolean }[] }>("/training")
@@ -39,15 +40,55 @@ export default function Header() {
       .catch(() => {});
   }, []);
 
-  const serviceChildren = apiServices.map((sv) => ({
-    href: `/services/${sv.slug}`,
-    label: language === "en" ? sv.nameEn : sv.nameBn,
+  const STATIC_SERVICES = [
+    { slug: "physiotherapy-rehabilitation", labelEn: "Physiotherapy & Rehabilitation", labelBn: "ফিজিওথেরাপি ও পুনর্বাসন" },
+    { slug: "on-demand-nursing",            labelEn: "On-Demand Nursing",             labelBn: "অন-ডিমান্ড নার্সিং" },
+    { slug: "home-diagnostics",             labelEn: "Home Diagnostics",              labelBn: "হোম ডায়াগনস্টিক্স" },
+  ];
+
+  const dynamicServiceSlugs = new Set(apiServices.map((sv) => sv.slug));
+  const serviceChildren = [
+    ...apiServices.map((sv) => ({
+      href: `/services/${sv.slug}`,
+      label: language === "en" ? sv.nameEn : sv.nameBn,
+    })),
+    ...STATIC_SERVICES.filter((sv) => !dynamicServiceSlugs.has(sv.slug)).map((sv) => ({
+      href: `/services/${sv.slug}`,
+      label: language === "en" ? sv.labelEn : sv.labelBn,
+    })),
+  ];
+
+  const STATIC_OTHER_SERVICES = [
+    { slug: "doctor-consultation",       labelEn: "Doctor Consultation",       labelBn: "ডাক্তার পরামর্শ" },
+    { slug: "doctor-home-visit",         labelEn: "Doctor Home Visit",         labelBn: "ডাক্তার হোম ভিজিট" },
+    { slug: "medical-equipment",         labelEn: "Medical Equipment",         labelBn: "মেডিকেল সরঞ্জাম" },
+    { slug: "hospital-visit-assistance", labelEn: "Hospital Visit Assistance", labelBn: "হাসপাতাল ভিজিট সহায়তা" },
+    { slug: "ambulance-service",         labelEn: "Ambulance Service",         labelBn: "অ্যাম্বুলেন্স সেবা" },
+    { slug: "other-support-services",    labelEn: "Other Support Services",    labelBn: "অন্যান্য সহায়তা সেবা" },
+  ];
+
+  const TRANSPORTATION_SERVICES = [
+    { slug: "transportation-services",   labelEn: "Transportation Services",   labelBn: "পরিবহন সেবা" },
+    { slug: "ambulance-service",         labelEn: "Ambulance Service",         labelBn: "অ্যাম্বুলেন্স সেবা" },
+    { slug: "hospital-visit-assistance", labelEn: "Hospital Visit Assistance", labelBn: "হাসপাতাল ভিজিট সহায়তা" },
+  ];
+
+  const transportationChildren = TRANSPORTATION_SERVICES.map((sv) => ({
+    href: `/other-services/${sv.slug}`,
+    label: language === "en" ? sv.labelEn : sv.labelBn,
   }));
 
-  const otherServiceChildren = apiOtherServices.map((sv) => ({
-    href: `/other-services/${sv.slug}`,
-    label: language === "en" ? sv.nameEn : sv.nameBn,
-  }));
+  const dynamicSlugs = new Set(apiOtherServices.map((sv) => sv.slug));
+  const otherServiceChildren = [
+    ...STATIC_OTHER_SERVICES.filter((sv) => !dynamicSlugs.has(sv.slug)).map((sv) => ({
+      href: `/other-services/${sv.slug}`,
+      label: language === "en" ? sv.labelEn : sv.labelBn,
+    })),
+    ...apiOtherServices.map((sv) => ({
+      href: `/other-services/${sv.slug}`,
+      label: language === "en" ? sv.nameEn : sv.nameBn,
+    })),
+  ];
 
   const trainingChildren = apiTrainings.map((tr) => ({
     href: `/training/${tr.slug}`,
@@ -57,15 +98,15 @@ export default function Header() {
   const isBn = language === "bn";
 
   const navLinks = [
-    { href: "/",              label: t.nav.home },
-    { href: "/about",         label: t.nav.about, megaAbout: true },
-    { href: "/services",      label: t.nav.services, children: serviceChildren },
-    { href: "/other-services", label: language === "en" ? "Other Services" : "অন্যান্য সেবা", children: otherServiceChildren },
-    { href: "/training",      label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
-    { href: "/job-application", label: t.jobApplication.title },
-    { href: "/notice-board",  label: t.nav.noticeBoard },
-    { href: "/gallery",       label: t.nav.gallery },
-    { href: "/contact",       label: t.nav.contact },
+    { href: "/",               label: t.nav.home },
+    { href: "/about",          label: t.nav.about, megaAbout: true },
+    { href: "/services",       label: language === "en" ? "Our Services" : "আমাদের সেবা", children: serviceChildren },
+    { href: "/other-services", label: language === "en" ? "Additional Services" : "অতিরিক্ত সেবা", children: otherServiceChildren },
+    { href: "/transportation",  label: language === "en" ? "Transportation" : "পরিবহন", children: transportationChildren },
+    { href: "/training",       label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
+    { href: "/gallery",        label: t.nav.gallery },
+    { href: "/notice-board",   label: t.nav.noticeBoard },
+    { href: "/contact",        label: t.nav.contact },
   ];
 
   return (
@@ -243,13 +284,14 @@ export default function Header() {
                       {link.label} <ChevronDown size={13} />
                     </Link>
                     {/* Dropdown */}
-                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-xl min-w-[210px] border-t-2 border-primary-600 rounded-b-lg">
+                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-xl min-w-[220px] border-t-2 border-primary-600 rounded-b-lg py-1">
                       {link.children.map(child => (
                         <Link
                           key={child.href}
                           href={child.href}
-                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors group/item"
                         >
+                          <span className="w-4 h-[2px] bg-primary-400 shrink-0 rounded-full group-hover/item:bg-white" />
                           {child.label}
                         </Link>
                       ))}
@@ -337,16 +379,17 @@ export default function Header() {
                       onClick={() => {
                         if (link.href === "/services") setServicesOpen(v => !v);
                         else if (link.href === "/other-services") setOtherServicesOpen(v => !v);
+                        else if (link.href === "/transportation") setTransportationOpen(v => !v);
                         else setTrainingOpen(v => !v);
                       }}
                       className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
                     >
                       {link.label}
                       <ChevronDown size={14} className={cn("transition-transform",
-                        (link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && "rotate-180"
+                        (link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : link.href === "/transportation" ? transportationOpen : trainingOpen) && "rotate-180"
                       )} />
                     </button>
-                    {(link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && (
+                    {(link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : link.href === "/transportation" ? transportationOpen : trainingOpen) && (
                       <div className="bg-nav-active pl-4">
                         {link.children.map(child => (
                           <Link
