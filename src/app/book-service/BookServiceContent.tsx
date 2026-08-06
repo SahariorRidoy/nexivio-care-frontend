@@ -118,6 +118,7 @@ export default function BookServiceContent() {
     const booking = await api.post<{ data: { id: string } }>("/bookings", {
       ...data,
       packageName: selectedPackage ? (isBn ? selectedPackage.nameBn : selectedPackage.nameEn) : undefined,
+      pricingPeriod: selectedPackage ? pricingPeriod : undefined,
       amount,
       paymentStatus: data.paymentMethod === "cash" ? "unpaid" : "pending",
     });
