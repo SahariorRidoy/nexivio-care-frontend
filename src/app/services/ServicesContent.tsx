@@ -42,7 +42,16 @@ const CATEGORY_KEYWORDS: Record<Exclude<CategoryKey, "all">, string[]> = {
   others:          [],
 };
 
+const CATEGORY_MAP: Record<string, CategoryKey> = {
+  caregiver:  "caregiver",
+  nursing:    "nursing",
+  "elder-care": "elderCare",
+  "nanny-care":  "babyCare",
+};
+
 function detectCategory(service: Service): CategoryKey {
+  if (service.category && CATEGORY_MAP[service.category]) return CATEGORY_MAP[service.category];
+  // fallback: slug keyword matching for legacy data
   const haystack = `${service.slug} ${service.nameEn}`.toLowerCase();
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS) as [Exclude<CategoryKey, "all">, string[]][]) {
     if (keywords.some((kw) => haystack.includes(kw))) return cat;

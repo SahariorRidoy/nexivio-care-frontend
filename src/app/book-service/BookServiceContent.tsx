@@ -404,6 +404,11 @@ export default function BookServiceContent() {
                               <span className="text-xs font-bold uppercase tracking-wide" style={{ color: isSelected ? PRIMARY : "#64748b" }}>
                                 {isBn ? pkg.nameBn : pkg.nameEn}
                               </span>
+                              {(isBn ? pkg.descriptionBn : pkg.descriptionEn) && (
+                                <span className="text-xs text-slate-400 leading-tight">
+                                  {isBn ? pkg.descriptionBn : pkg.descriptionEn}
+                                </span>
+                              )}
                               <span className="text-base font-bold" style={{ color: PRIMARY }}>
                                 ৳{price.toLocaleString()}
                                 <span className="text-xs font-normal text-slate-400"> /{periodLabel}</span>

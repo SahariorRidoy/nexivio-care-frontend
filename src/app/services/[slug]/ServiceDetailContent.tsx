@@ -191,7 +191,7 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
             )}
           </div>
 
-          {!isStatic && <ServicePackageCards slug={slug} packages={packages} />}
+          {!isStatic && <ServicePackageCards slug={slug} packages={packages} featuresEn={service?.featuresEn ?? []} featuresBn={service?.featuresBn ?? []} />}
 
         </div>
       </section>

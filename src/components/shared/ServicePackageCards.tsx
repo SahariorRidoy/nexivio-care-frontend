@@ -26,11 +26,18 @@ export function slugColor(slug: string): string {
 interface Props {
   slug: string;
   packages: ServicePackage[];
+  featuresEn?: string[];
+  featuresBn?: string[];
 }
 
-export default function ServicePackageCards({ slug, packages }: Props) {
+export default function ServicePackageCards({ slug, packages, featuresEn = [], featuresBn = [] }: Props) {
   const { language } = useLanguage();
   const color = slugColor(slug);
+  // Build a map from English feature key → display label (BN or EN)
+  const featureLabelMap = new Map<string, string>();
+  featuresEn.forEach((en, i) => {
+    featureLabelMap.set(en, language === "bn" && featuresBn[i] ? featuresBn[i] : en);
+  });
   const allFeatures = Array.from(new Set(packages.flatMap((p) => p.includedFeatures)));
 
   if (packages.length === 0) return null;
@@ -59,6 +66,11 @@ export default function ServicePackageCards({ slug, packages }: Props) {
                     <p className="text-4xl font-black tracking-tight text-center leading-none" style={{ color }}>
                       {name}
                     </p>
+                    {(language === "bn" ? pkg.descriptionBn : pkg.descriptionEn) && (
+                      <p className="text-xs text-center text-slate-500 leading-relaxed px-1">
+                        {language === "bn" ? pkg.descriptionBn : pkg.descriptionEn}
+                      </p>
+                    )}
                     <span
                       className="text-xs font-bold uppercase tracking-widest text-white px-4 py-1 rounded-full"
                       style={{ backgroundColor: color }}
@@ -83,7 +95,7 @@ export default function ServicePackageCards({ slug, packages }: Props) {
                               ? <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: "#22c55e" }} />
                               : <span className="shrink-0 mt-0.5 w-4 h-4" />
                             }
-                            {f}
+                            {featureLabelMap.get(f) ?? f}
                           </li>
                         );
                       })}

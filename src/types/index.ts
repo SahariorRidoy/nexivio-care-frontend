@@ -28,6 +28,8 @@ export interface ServicePackage {
   tier: 'basic' | 'standard' | 'premium';
   nameEn: string;
   nameBn: string;
+  descriptionEn?: string;
+  descriptionBn?: string;
   dutyHours: number;
   dailyPrice: number;
   weeklyPrice: number;
@@ -46,6 +48,7 @@ export interface Service {
   shortDescBn: string;
   image: string;
   icon?: string;
+  category?: string;
   featuresEn: string[];
   featuresBn: string[];
   packages: ServicePackage[];
