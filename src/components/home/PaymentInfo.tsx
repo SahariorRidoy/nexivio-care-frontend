@@ -124,7 +124,7 @@ export default function PaymentInfo() {
           <div className="flex flex-col gap-6">
             {mobilePayments.map(({ name, number, color, lightBg, border, textColor, logo, type }) => (
               <div key={name} className={`bg-white rounded-2xl overflow-hidden shadow-2xl`}>
-                <div className={`px-6 py-4 flex items-center gap-3 bg-gradient-to-r ${color}`}>
+                <div className={`px-6 py-4 flex items-center gap-3 bg-linear-to-r ${color}`}>
                   <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center overflow-hidden">
                     <Image src={logo} alt={name} width={40} height={40} className="object-contain" />
                   </div>

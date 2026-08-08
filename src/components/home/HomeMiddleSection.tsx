@@ -42,7 +42,7 @@ export default function HomeMiddleSection() {
         style={{ backgroundImage: "url('/Our-Services-Background-Image.webp')" }}
       />
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-[#0C2468]/80" />
+      <div className="absolute inset-0 bg-nav-DEFAULT/80" />
 
       <div className="relative container mx-auto max-w-7xl px-4">
 
@@ -87,7 +87,7 @@ export default function HomeMiddleSection() {
                 <div key={i} className="flex items-start gap-4 relative">
                   {/* Vertical connector */}
                   {i < steps.length - 1 && (
-                    <div className="absolute left-[21px] top-11 w-px h-full bg-white/20" />
+                    <div className="absolute left-5.25 top-11 w-px h-full bg-white/20" />
                   )}
                   {/* Step circle */}
                   <div className="relative shrink-0 flex flex-col items-center">
@@ -115,7 +115,7 @@ export default function HomeMiddleSection() {
                 alt="Job opportunity"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0C2468]/90 via-[#0C2468]/40 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-nav-DEFAULT/90 via-nav-DEFAULT/40 to-transparent" />
               <div className="absolute bottom-4 left-5">
                 <h3 className="text-white font-bold text-xl sm:text-2xl">{t.jobApplication.title}</h3>
                 <p className="text-white/70 text-sm">{t.jobApplication.subtitle}</p>
