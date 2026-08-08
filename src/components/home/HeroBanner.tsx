@@ -109,7 +109,7 @@ export default function HeroBanner() {
   const subtitle = isBn ? (slide.subtitleBn ?? slide.subtitleEn) : (slide.subtitleEn ?? slide.subtitleBn);
 
   return (
-    <section className="bg-white">
+    <section className="bg-gray-100">
       <div className="container mx-auto max-w-7xl px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-4 items-stretch">
 

@@ -48,7 +48,7 @@ export default function ContactCTA() {
   ];
 
   return (
-    <section className="pb-14">
+    <section className="bg-gray-100 pt-6 pb-14">
       <div className="container mx-auto max-w-7xl px-4">
 
         {/* Header */}
@@ -56,8 +56,8 @@ export default function ContactCTA() {
           {/* <span className="inline-block rounded-full bg-primary-700/30 px-3 py-1 text-xs font-semibold text-primary-400 mb-3">
             {t.nav.contact}
           </span> */}
-          <h2 className="text-2xl font-bold text-slate-800 sm:text-3xl">{cta.title}</h2>
-          <p className="mt-2 text-slate-500 text-sm">{cta.subtitle}</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">{cta.title}</h2>
+          <p className="mt-2 text-slate-500 text-base sm:text-lg">{cta.subtitle}</p>
         </div>
 
         {/* Contact Cards */}
@@ -74,8 +74,8 @@ export default function ContactCTA() {
                 <Icon size={26} />
               </div>
               <div>
-                <p className="font-bold text-base">{label}</p>
-                <p className="text-xs text-white/70 mt-0.5">{sub}</p>
+                <p className="font-bold text-lg">{label}</p>
+                <p className="text-sm text-white/70 mt-0.5">{sub}</p>
               </div>
             </a>
           ))}

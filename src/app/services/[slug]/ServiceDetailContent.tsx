@@ -234,9 +234,6 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                     style={{ backgroundColor: bg }}
                   >
                     <div>
-                      <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
-                        {language === "en" ? "Nexivio Care" : "নেক্সিভিও কেয়ার"}
-                      </p>
                       <h3 className="text-3xl font-black text-white leading-tight">{name}</h3>
                     </div>
 

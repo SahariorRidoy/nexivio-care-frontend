@@ -137,7 +137,7 @@ export default function Testimonials() {
 
                   <StarRating value={review.rating} size={18} className="mb-4" />
 
-                  <p className="flex-1 text-sm leading-relaxed text-slate-600 line-clamp-5">
+                  <p className="flex-1 text-sm sm:text-base leading-relaxed text-slate-600 line-clamp-5">
                     &ldquo;{comment}&rdquo;
                   </p>
 
@@ -153,10 +153,10 @@ export default function Testimonials() {
                       {getInitials(review.customerName)}
                     </div>
                     <div>
-                      <p className="font-semibold text-sm text-slate-900">
+                      <p className="font-semibold text-base text-slate-900">
                         {review.customerName}
                       </p>
-                      <p className="text-xs mt-0.5 text-primary-600">
+                      <p className="text-sm mt-0.5 text-primary-600">
                         {review.serviceUsed}
                       </p>
                     </div>

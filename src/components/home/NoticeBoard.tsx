@@ -31,18 +31,18 @@ export default function NoticeBoard() {
   if (notices.length === 0) return null;
 
   return (
-    <section className="bg-white pt-16">
+    <section className="bg-gray-100 pt-16">
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-10">
 
           {/* Left — About Us */}
           <div className="lg:w-1/2 shrink-0 rounded-xl border border-gray-100 shadow-sm overflow-hidden self-start">
             <div className="bg-navy-900 px-5 py-3">
-              <h2 className="text-white font-bold text-base">{t.about.title}</h2>
+              <h2 className="text-white font-bold text-lg sm:text-xl">{t.about.title}</h2>
             </div>
             <div className="p-5 space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">{intro.description}</p>
-              <p className="text-sm text-gray-600 leading-relaxed">{t.about.profile.description}</p>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{intro.description}</p>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{t.about.profile.description}</p>
             </div>
             <div className="px-5 pb-5">
               <Link
@@ -57,7 +57,7 @@ export default function NoticeBoard() {
           {/* Right — Notice Board */}
           <div className="flex-1 rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between bg-primary-800 px-5 py-3">
-              <h2 className="text-white font-bold text-base">{nb.title}</h2>
+              <h2 className="text-white font-bold text-lg sm:text-xl">{nb.title}</h2>
               <Link href="/notice-board" className="bg-white text-primary-800 hover:bg-primary-50 text-xs font-bold px-3 py-1 rounded-md transition-colors">
                 {nb.viewAllNotices}
               </Link>
@@ -82,7 +82,7 @@ export default function NoticeBoard() {
                       {language === "en" ? cfg.labelEn : cfg.labelBn}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 line-clamp-2">
+                      <p className="text-sm sm:text-base font-medium text-gray-800 line-clamp-2">
                         {language === "en" ? notice.titleEn : notice.titleBn}
                       </p>
                       {notice.documentUrl && (

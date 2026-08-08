@@ -41,8 +41,8 @@ export default function HowItWorks() {
                 >
                   {step.number}
                 </div>
-                <h3 className="mt-4 font-semibold text-white">{step.title}</h3>
-                <p className="mt-2 text-sm text-primary-200 leading-relaxed">{step.desc}</p>
+                <h3 className="mt-4 text-base sm:text-lg font-semibold text-white">{step.title}</h3>
+                <p className="mt-2 text-sm sm:text-base text-primary-200 leading-relaxed">{step.desc}</p>
               </div>
             );
           })}

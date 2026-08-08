@@ -14,6 +14,103 @@ import type { OtherService } from "@/types";
 const PRIMARY = "#0C2468";
 const WHATSAPP_NUMBER = "8801XXXXXXXXX"; // replace with real number
 
+type EquipmentItem = { nameEn: string; nameBn: string; image: string };
+type EquipmentCategory = { titleEn: string; titleBn: string; items: EquipmentItem[] };
+
+const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
+  {
+    titleEn: "Respiratory Care", titleBn: "শ্বাসযন্ত্রের সেবা",
+    items: [
+      { nameEn: "Oxygen Concentrator", nameBn: "অক্সিজেন কনসেন্ট্রেটর", image: "/oxygen concentrator.webp" },
+      { nameEn: "Nebulizer",           nameBn: "নেবুলাইজার",            image: "/nebulizer.webp" },
+      { nameEn: "Pulse Oximeter",      nameBn: "পালস অক্সিমিটার",       image: "/pulse oximeter.png" },
+      { nameEn: "Steamer",             nameBn: "স্টিমার",               image: "/streamer.webp" },
+      { nameEn: "CPAP",                nameBn: "সিপ্যাপ",               image: "/cpap.webp" },
+      { nameEn: "BiPAP Machine",       nameBn: "বাইপ্যাপ মেশিন",        image: "/bipap.webp" },
+    ],
+  },
+  {
+    titleEn: "Wellness & Care", titleBn: "সুস্থতা ও সেবা",
+    items: [
+      { nameEn: "Blood Pressure Machine", nameBn: "ব্লাড প্রেশার মেশিন",  image: "/blood pressure machine.jpg" },
+      { nameEn: "Digital BP Monitor",     nameBn: "ডিজিটাল বিপি মনিটর",  image: "/Digital bp machine.webp" },
+      { nameEn: "Glucometer",             nameBn: "গ্লুকোমিটার",          image: "/glucometer.webp" },
+      { nameEn: "Suction Machine",        nameBn: "সাকশন মেশিন",         image: "/suction machine .webp" },
+      { nameEn: "Face Mask",              nameBn: "ফেস মাস্ক",            image: "/face mask.webp" },
+      { nameEn: "Adult Diapers",          nameBn: "অ্যাডাল্ট ডায়াপার",   image: "/adult diapers.webp" },
+      { nameEn: "PPE / IPC Kits",         nameBn: "পিপিই / আইপিসি কিট",  image: "/ppe kit.webp" },
+    ],
+  },
+  {
+    titleEn: "Hospital Beds & Air Mattresses", titleBn: "হাসপাতাল বেড ও এয়ার ম্যাট্রেস",
+    items: [
+      { nameEn: "Manual / Electric Beds",     nameBn: "ম্যানুয়াল / ইলেকট্রিক বেড",  image: "/Manual  Electric Beds.webp" },
+      { nameEn: "High-Quality Hospital Beds", nameBn: "উচ্চমানের হাসপাতাল বেড",       image: "/High-Quality Hospital Beds.webp" },
+      { nameEn: "3 or 5 Functional Beds",     nameBn: "৩ বা ৫ ফাংশনাল বেড",           image: "/3 or 5 Functional Beds.webp" },
+      { nameEn: "Anti-Bedsore Mattresses",    nameBn: "অ্যান্টি-বেডসোর ম্যাট্রেস",    image: "/Anti-Bedsore Mattresses.webp" },
+    ],
+  },
+  {
+    titleEn: "Mobility", titleBn: "গতিশীলতা সহায়ক",
+    items: [
+      { nameEn: "Wheelchair",         nameBn: "হুইলচেয়ার",         image: "/Wheelchair.webp" },
+      { nameEn: "Monopod Stick",      nameBn: "মনোপড স্টিক",       image: "/Monopod Stick.webp" },
+      { nameEn: "Quadruped Stick",    nameBn: "কোয়াড্রুপেড স্টিক", image: "/Quadruped Stick.webp" },
+      { nameEn: "Walkers",            nameBn: "ওয়াকার",            image: "/Walkers.webp" },
+      { nameEn: "Under Arm Crutches", nameBn: "আন্ডার আর্ম ক্রাচ", image: "/Under Arm Crutches.webp" },
+    ],
+  },
+  {
+    titleEn: "Bathroom Accessories", titleBn: "বাথরুম আনুষাঙ্গিক",
+    items: [
+      { nameEn: "Commode Chair", nameBn: "কমোড চেয়ার",   image: "/Commode Chair.webp" },
+      { nameEn: "Toilet Raiser", nameBn: "টয়লেট রেইজার", image: "/Toilet Raiser.webp" },
+      { nameEn: "Urinal Pot",    nameBn: "ইউরিনাল পট",    image: "/Urinal Pot.webp" },
+      { nameEn: "Bed Pan",       nameBn: "বেড প্যান",      image: "/Bed Pan.webp" },
+      { nameEn: "Shower Chair",  nameBn: "শাওয়ার চেয়ার",  image: "/Shower Chair.webp" },
+    ],
+  },
+  {
+    titleEn: "Orthopedics Care", titleBn: "অর্থোপেডিক সেবা",
+    items: [
+      { nameEn: "Heating Pad / Belt",   nameBn: "হিটিং প্যাড / বেল্ট",   image: "/Heating Pad - Belt.webp" },
+      { nameEn: "LS Belt",              nameBn: "এলএস বেল্ট",             image: "/LS Belt.webp" },
+      { nameEn: "Knee Cap",             nameBn: "নি ক্যাপ",               image: "/Knee Cap.webp" },
+      { nameEn: "Shoulder Arm Support", nameBn: "শোল্ডার আর্ম সাপোর্ট",  image: "/Shoulder Arm Support.webp" },
+      { nameEn: "Recliner",             nameBn: "রিক্লাইনার",             image: "/Recliner.webp" },
+    ],
+  },
+];
+
+function MedicalEquipmentShowcase({ language }: { language: string }) {
+  return (
+    <div className="flex flex-col gap-12">
+      {EQUIPMENT_CATEGORIES.map((cat) => (
+        <div key={cat.titleEn}>
+          <h2 className="text-xl font-bold mb-5 pb-2 border-b-2" style={{ color: PRIMARY, borderColor: PRIMARY }}>
+            {language === "en" ? cat.titleEn : cat.titleBn}
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {cat.items.map((item) => (
+              <div key={item.nameEn} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div className="relative h-36 w-full">
+                  <Image src={item.image} alt={item.nameEn} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-semibold text-center" style={{ color: PRIMARY }}>
+                    {language === "en" ? item.nameEn : item.nameBn}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const STATIC_OTHER_SERVICE_DATA: Record<string, {
   nameEn: string; nameBn: string;
   shortDescEn: string; shortDescBn: string;
@@ -87,32 +184,8 @@ Our doctors arrive fully equipped with basic diagnostic tools. Visits can be sch
     nameBn: "মেডিকেল সরঞ্জাম",
     shortDescEn: "Rental and supply of home medical equipment for patient care.",
     shortDescBn: "রোগীর সেবার জন্য হোম মেডিকেল সরঞ্জাম ভাড়া ও সরবরাহ।",
-    descriptionEn: `Nexivio Care provides a wide range of medical equipment for home use — available for both rental and purchase. We ensure that patients recovering at home have access to the right tools for safe and effective care.
-
-Equipment we supply:
-• Hospital beds and patient mattresses (anti-bedsore)
-• Wheelchairs and mobility aids
-• Oxygen concentrators and cylinders
-• Suction machines and nebulizers
-• Blood pressure monitors and pulse oximeters
-• Blood glucose meters and test strips
-• Infusion pumps and IV stands
-• Commode chairs and bathroom safety aids
-
-All equipment is sanitized, tested, and delivered to your home. Our team provides setup assistance and usage guidance. Flexible rental periods are available to suit short-term and long-term needs.`,
-    descriptionBn: `নেক্সিভিও কেয়ার বাড়িতে ব্যবহারের জন্য বিস্তৃত মেডিকেল সরঞ্জাম সরবরাহ করে — ভাড়া ও ক্রয় উভয়ই পাওয়া যায়। আমরা নিশ্চিত করি যে বাড়িতে সুস্থ হওয়া রোগীরা নিরাপদ ও কার্যকর সেবার জন্য সঠিক সরঞ্জাম পান।
-
-আমরা যে সরঞ্জাম সরবরাহ করি:
-• হাসপাতাল বেড ও রোগীর ম্যাট্রেস (অ্যান্টি-বেডসোর)
-• হুইলচেয়ার ও গতিশীলতা সহায়ক সরঞ্জাম
-• অক্সিজেন কনসেন্ট্রেটর ও সিলিন্ডার
-• সাকশন মেশিন ও নেবুলাইজার
-• রক্তচাপ মনিটর ও পালস অক্সিমিটার
-• ব্লাড গ্লুকোজ মিটার ও টেস্ট স্ট্রিপ
-• ইনফিউশন পাম্প ও আইভি স্ট্যান্ড
-• কমোড চেয়ার ও বাথরুম সেফটি এইড
-
-সকল সরঞ্জাম স্যানিটাইজ, পরীক্ষিত এবং আপনার বাড়িতে ডেলিভারি করা হয়। আমাদের টিম সেটআপ সহায়তা ও ব্যবহার নির্দেশনা প্রদান করে।`,
+    descriptionEn: "Nexivio Care provides a wide range of medical equipment for home use — available for both rental and purchase. All equipment is sanitized, tested, and delivered to your home with setup assistance.",
+    descriptionBn: "নেক্সিভিও কেয়ার বাড়িতে ব্যবহারের জন্য বিস্তৃত মেডিকেল সরঞ্জাম সরবরাহ করে — ভাড়া ও ক্রয় উভয়ই পাওয়া যায়। সকল সরঞ্জাম স্যানিটাইজ, পরীক্ষিত এবং সেটআপ সহায়তাসহ আপনার বাড়িতে ডেলিভারি করা হয়।",
     image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&auto=format&fit=crop",
   },
   "hospital-visit-assistance": {
@@ -250,14 +323,17 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
   const image = isStatic ? staticData.image : service?.image ?? "";
   const packages = isStatic ? [] : (service?.packages ?? []);
 
+  const isMedicalEquipment = slug === "medical-equipment";
+
   return (
     <>
       <PageHeader title={title} subtitle={subtitle} bgImage={image || undefined} bgColor={color} />
       <section className="bg-slate-50 py-16">
         <div className="container mx-auto max-w-6xl px-4 flex flex-col gap-14">
 
+          {/* Short description + CTA */}
           <div className="flex flex-col lg:flex-row gap-8 items-start">
-            {image && (
+            {image && !isMedicalEquipment && (
               <div className="relative w-full lg:w-96 h-64 rounded-2xl overflow-hidden shrink-0 shadow">
                 <Image src={image} alt={title} fill className="object-cover" />
               </div>
@@ -294,6 +370,9 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
               </div>
             )}
           </div>
+
+          {/* Medical Equipment picture grid */}
+          {isMedicalEquipment && <MedicalEquipmentShowcase language={language} />}
 
           {!isStatic && <ServicePackageCards slug={slug} packages={packages} />}
 

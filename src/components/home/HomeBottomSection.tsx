@@ -93,9 +93,9 @@ function ReviewCard({ review, language, index }: { review: Review; language: str
             {getInitials(review.customerName)}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 truncate">{review.customerName}</p>
+            <p className="text-base font-semibold text-gray-900 truncate">{review.customerName}</p>
             {review.serviceUsed && (
-              <p className="text-xs text-primary-600 font-medium truncate">{review.serviceUsed}</p>
+              <p className="text-sm text-primary-600 font-medium truncate">{review.serviceUsed}</p>
             )}
           </div>
           {review.rating === 5 && (
@@ -241,7 +241,7 @@ export default function HomeBottomSection() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-linear-to-b from-slate-50 via-white to-slate-50 py-20">
+      <section className="relative overflow-hidden bg-gray-100 py-20">
         {/* Subtle background blobs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary-100/40 blur-3xl" />

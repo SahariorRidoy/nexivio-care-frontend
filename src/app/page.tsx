@@ -1,4 +1,5 @@
 import HeroBanner from "@/components/home/HeroBanner";
+import MainServicesGrid from "@/components/home/MainServicesGrid";
 import HomeMiddleSection from "@/components/home/HomeMiddleSection";
 import HomeBottomSection from "@/components/home/HomeBottomSection";
 import HomeTeam from "@/components/home/HomeTeam";
@@ -9,6 +10,7 @@ export default function HomePage() {
   return (
     <>
       <HeroBanner />
+      <MainServicesGrid />
       <HomeMiddleSection />
       <HomeBottomSection />
       <HomeTeam />

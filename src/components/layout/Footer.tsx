@@ -31,11 +31,41 @@ export default function Footer() {
 
   const [services, setServices] = useState<Service[]>([]);
 
+  const STATIC_SERVICES: Service[] = [
+    {
+      id: "static-1", slug: "physiotherapy-rehabilitation", icon: "Activity", isActive: true, createdAt: "",
+      nameEn: "Physiotherapy & Rehabilitation", nameBn: "ফিজিওথেরাপি ও পুনর্বাসন",
+      shortDescEn: "", shortDescBn: "", descriptionEn: "", descriptionBn: "",
+      image: "", packages: [], featuresEn: [], featuresBn: [],
+    },
+    {
+      id: "static-2", slug: "on-demand-nursing", icon: "Clock", isActive: true, createdAt: "",
+      nameEn: "On-Demand Nursing", nameBn: "অন-ডিমান্ড নার্সিং",
+      shortDescEn: "", shortDescBn: "", descriptionEn: "", descriptionBn: "",
+      image: "", packages: [], featuresEn: [], featuresBn: [],
+    },
+    {
+      id: "static-3", slug: "home-diagnostics", icon: "FlaskConical", isActive: true, createdAt: "",
+      nameEn: "Home Diagnostics", nameBn: "হোম ডায়াগনস্টিক্স",
+      shortDescEn: "", shortDescBn: "", descriptionEn: "", descriptionBn: "",
+      image: "", packages: [], featuresEn: [], featuresBn: [],
+    },
+  ];
+
   useEffect(() => {
     api.get<{ data: Service[] }>("/services")
-      .then((r) => setServices(r.data.filter((s) => s.isActive)))
-      .catch(() => {});
+      .then((r) => {
+        const active = r.data.filter((s) => s.isActive);
+        const dynamicSlugs = new Set(active.map((s) => s.slug));
+        setServices([
+          ...active,
+          ...STATIC_SERVICES.filter((s) => !dynamicSlugs.has(s.slug)),
+        ]);
+      })
+      .catch(() => setServices(STATIC_SERVICES));
   }, []);
+
+  const displayServices = services.length > 0 ? services : STATIC_SERVICES;
 
   return (
     <footer style={{ backgroundColor: "#0a1628" }} className="text-slate-300">
@@ -103,16 +133,13 @@ export default function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-bold text-white">{t.nav.services}</h3>
             <ul className="flex flex-col gap-2">
-              {services.map((svc) => (
+              {displayServices.map((svc) => (
                 <li key={svc.id}>
                   <Link href={`/services/${svc.slug}`} className="text-xs text-slate-400 hover:text-primary-400 transition-colors">
                     {language === "en" ? svc.nameEn : svc.nameBn}
                   </Link>
                 </li>
               ))}
-              {services.length === 0 && (
-                <li><span className="text-xs text-slate-600">—</span></li>
-              )}
             </ul>
           </div>
 

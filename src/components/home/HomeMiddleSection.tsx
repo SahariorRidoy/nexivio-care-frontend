@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone, MessageCircle, Users, Home, ShieldCheck, BadgeCheck, Zap, HeadphonesIcon, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -8,135 +9,138 @@ export default function HomeMiddleSection() {
   const { t } = useLanguage();
   const why = t.home.whyChoose;
   const how = t.home.howItWorks;
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const whyItems = [
-    { label: why.items.trainedStaff.title,      Icon: BadgeCheck },
-    { label: why.items.verifiedCaregiver.title, Icon: ShieldCheck },
-    { label: why.items.fastResponse.title,      Icon: Zap },
-    { label: why.items.support247.title,        Icon: HeadphonesIcon },
+    { label: why.items.trainedStaff.title,      desc: why.items.trainedStaff.desc,      Icon: BadgeCheck,    color: "bg-blue-500" },
+    { label: why.items.verifiedCaregiver.title, desc: why.items.verifiedCaregiver.desc, Icon: ShieldCheck,   color: "bg-green-500" },
+    { label: why.items.fastResponse.title,      desc: why.items.fastResponse.desc,      Icon: Zap,           color: "bg-amber-500" },
+    { label: why.items.support247.title,        desc: why.items.support247.desc,        Icon: HeadphonesIcon, color: "bg-purple-500" },
   ];
 
   const steps = [
-    { num: "১", Icon: Phone,         label: how.steps.step1.title },
-    { num: "২", Icon: MessageCircle, label: how.steps.step2.title },
-    { num: "৩", Icon: Users,         label: how.steps.step3.title },
-    { num: "৪", Icon: Home,          label: how.steps.step4.title },
+    { Icon: Phone,         label: how.steps.step1.title, num: "01" },
+    { Icon: MessageCircle, label: how.steps.step2.title, num: "02" },
+    { Icon: Users,         label: how.steps.step3.title, num: "03" },
+    { Icon: Home,          label: how.steps.step4.title, num: "04" },
   ];
 
   const jobItems = [
     t.services.categories.nursing,
     t.services.categories.caregiver,
     t.services.categories.babyCare,
+    t.services.categories.elderCare,
     t.common.experience,
-    t.jobApplication.title,
   ];
 
   return (
-    <section className="bg-gray-50 pt-12">
-      <div className="container mx-auto max-w-7xl px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <section ref={sectionRef} className="relative py-20 overflow-hidden">
+
+      {/* ── Parallax Background ── */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: "url('/Our-Services-Background-Image.webp')" }}
+      />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-[#0C2468]/80" />
+
+      <div className="relative container mx-auto max-w-7xl px-4">
+
+        {/* ── Section Title ── */}
+        <div className="text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">{why.title}</h2>
+          <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-green-400" />
+        </div>
+
+        {/* ── Three Column Layout ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
           {/* ── LEFT: Why Choose Us ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="bg-primary-800 px-5 py-3">
-              <h2 className="text-white font-bold text-lg leading-snug">
-                {why.title}
-              </h2>
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10">
+              <h3 className="text-white font-bold text-xl sm:text-2xl">{why.title}</h3>
+              <p className="text-white/60 text-sm mt-1">{why.subtitle}</p>
             </div>
-            <div className="flex gap-3 p-4">
-              <div className="shrink-0 w-28 rounded-lg overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&q=80&auto=format&fit=crop"
-                  alt="Nurse"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <ul className="flex flex-col gap-4 flex-1 py-1">
-                {whyItems.map(({ label, Icon }, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-800">
-                      <Icon size={12} strokeWidth={2.5} />
-                    </span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
+            <div className="p-6 flex flex-col gap-5">
+              {whyItems.map(({ label, desc, Icon, color }, i) => (
+                <div key={i} className="flex items-start gap-4">
+                  <div className={`shrink-0 flex h-11 w-11 items-center justify-center rounded-xl ${color} shadow-lg`}>
+                    <Icon size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-base sm:text-lg leading-tight">{label}</p>
+                    <p className="text-white/60 text-sm mt-0.5 leading-relaxed">{desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* ── CENTER: How It Works ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="text-center px-5 pt-5 pb-3">
-              <h2 className="font-bold text-lg text-gray-800 leading-tight">
-                {how.title}
-              </h2>
-              <div className="flex items-center justify-center gap-2 mt-1.5">
-                <div className="h-px w-8 bg-gray-300" />
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="#4caf50">
-                  <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-                </svg>
-                <div className="h-px w-8 bg-gray-300" />
-              </div>
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10 text-center">
+              <h3 className="text-white font-bold text-xl sm:text-2xl">{how.title}</h3>
+              <p className="text-white/60 text-sm mt-1">{how.subtitle}</p>
             </div>
-            <div className="px-4 pb-6">
-              <div className="flex items-start justify-between gap-1">
-                {steps.map(({ num, Icon, label }, i) => (
-                  <div key={i} className="flex items-start gap-1 flex-1">
-                    <div className="flex flex-col items-center text-center flex-1">
-                      <div className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-md mb-2 ${i % 2 === 0 ? "bg-primary-700" : "bg-green-600"}`}>
-                        <Icon size={24} />
-                      </div>
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 text-white text-xs font-bold mb-1.5">
-                        {num}
-                      </div>
-                      <p className="text-xs text-gray-600 leading-tight">{label}</p>
+            <div className="p-6 flex flex-col gap-0">
+              {steps.map(({ Icon, label, num }, i) => (
+                <div key={i} className="flex items-start gap-4 relative">
+                  {/* Vertical connector */}
+                  {i < steps.length - 1 && (
+                    <div className="absolute left-[21px] top-11 w-px h-full bg-white/20" />
+                  )}
+                  {/* Step circle */}
+                  <div className="relative shrink-0 flex flex-col items-center">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-full shadow-lg z-10 ${i % 2 === 0 ? "bg-green-500" : "bg-blue-500"}`}>
+                      <Icon size={20} className="text-white" />
                     </div>
-                    {i < steps.length - 1 && (
-                      <div className="mt-5 shrink-0 text-gray-400">
-                        <ArrowRight size={16} />
-                      </div>
-                    )}
                   </div>
-                ))}
-              </div>
+                  {/* Content */}
+                  <div className="pb-7">
+                    <span className="text-white/40 text-xs font-bold tracking-widest">{num}</span>
+                    <p className="text-white font-semibold text-base sm:text-lg leading-snug">{label}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* ── RIGHT: Job Section ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="bg-navy-900 px-5 py-3">
-              <h2 className="text-white font-bold text-lg leading-snug">
-                {t.jobApplication.title}
-              </h2>
-              <p className="text-white/70 text-sm">{t.jobApplication.subtitle}</p>
-            </div>
-            <div className="flex gap-3 p-4">
-              <ul className="flex flex-col gap-2.5 flex-1 py-1">
-                {jobItems.map((item, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-800">
-                      <Check size={12} strokeWidth={3} />
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="shrink-0 w-28 rounded-lg overflow-hidden self-start">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&q=80&auto=format&fit=crop"
-                  alt="Job opportunity"
-                  className="w-full h-full object-cover"
-                />
+          {/* ── RIGHT: Job Application ── */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden flex flex-col">
+            {/* Image banner */}
+            <div className="relative h-44 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80&auto=format&fit=crop"
+                alt="Job opportunity"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C2468]/90 via-[#0C2468]/40 to-transparent" />
+              <div className="absolute bottom-4 left-5">
+                <h3 className="text-white font-bold text-xl sm:text-2xl">{t.jobApplication.title}</h3>
+                <p className="text-white/70 text-sm">{t.jobApplication.subtitle}</p>
               </div>
             </div>
-            <div className="px-4 pb-5">
+
+            {/* Job list */}
+            <div className="p-6 flex flex-col gap-3 flex-1">
+              {jobItems.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-500 shadow">
+                    <Check size={13} strokeWidth={3} className="text-white" />
+                  </span>
+                  <span className="text-white text-sm sm:text-base font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="px-6 pb-6">
               <Link
                 href="/job-application"
-                className="block text-center bg-navy-900 hover:bg-navy-800 text-white text-sm font-bold py-3 rounded-lg transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-base transition-colors shadow-lg"
               >
-                {t.common.applyNow}
+                {t.common.applyNow} <ArrowRight size={16} />
               </Link>
             </div>
           </div>

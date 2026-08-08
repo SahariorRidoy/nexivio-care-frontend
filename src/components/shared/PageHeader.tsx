@@ -20,14 +20,9 @@ export default function PageHeader({ title, subtitle, className, bgImage, bgColo
       />
       <div
         className="absolute inset-0"
-        style={{ background: bgColor
-          ? `linear-gradient(135deg, ${bgColor}4D 0%, ${bgColor}26 100%)`
-          : "linear-gradient(135deg, rgba(12,36,104,0.30) 0%, rgba(12,36,104,0.18) 100%)" }}
+        style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 100%)" }}
       />
       <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-        <span className="inline-block mb-3 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase border border-white/30 text-white/80 backdrop-blur-sm">
-          Nexivio Care
-        </span>
         <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">{title}</h1>
         {subtitle && <p className="mt-2 text-blue-200 text-sm max-w-md">{subtitle}</p>}
         <div className="mt-4 h-0.5 w-12 rounded-full bg-primary-400 mx-auto" />

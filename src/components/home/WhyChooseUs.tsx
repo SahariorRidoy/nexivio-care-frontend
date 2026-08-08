@@ -16,7 +16,7 @@ export default function WhyChooseUs() {
   const why = t.home.whyChoose;
 
   return (
-    <section className="bg-white py-16">
+    <section className="bg-gray-100 py-16">
       <div className="container mx-auto max-w-7xl px-4">
         <SectionTitle title={why.title} subtitle={why.subtitle} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -30,8 +30,8 @@ export default function WhyChooseUs() {
                 <div className={`flex h-16 w-16 items-center justify-center rounded-full ${color}`}>
                   <Icon size={28} />
                 </div>
-                <h3 className="font-semibold text-slate-900">{item.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900">{item.title}</h3>
+                <p className="text-sm sm:text-base text-slate-500 leading-relaxed">{item.desc}</p>
               </div>
             );
           })}
