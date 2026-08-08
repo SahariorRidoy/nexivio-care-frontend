@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Phone } from "lucide-react";
+import { ChevronRight, Phone, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
@@ -12,6 +12,7 @@ import ServicePackageCards, { slugColor } from "@/components/shared/ServicePacka
 import type { Service } from "@/types";
 
 const PRIMARY = "#0C2468";
+const WHATSAPP_NUMBER = "8801XXXXXXXXX"; // replace with real number
 
 const STATIC_SERVICE_DATA: Record<string, {
   nameEn: string; nameBn: string;
@@ -178,14 +179,33 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                 <p className="text-slate-600 leading-relaxed whitespace-pre-line">{description}</p>
 
                 {isStatic && (
-                  <Link
-                    href="/contact"
-                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: PRIMARY }}
-                  >
-                    <Phone size={16} />
-                    {language === "en" ? "Contact Us for This Service" : "এই সেবার জন্য যোগাযোগ করুন"}
-                  </Link>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link
+                      href={`/book-service?service=${slug}`}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: "#16a34a" }}
+                    >
+                      {language === "en" ? "Get Now" : "এখনই নিন"}
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: PRIMARY }}
+                    >
+                      <Phone size={16} />
+                      {language === "en" ? "Contact Us for This Service" : "এই সেবার জন্য যোগাযোগ করুন"}
+                    </Link>
+                    <a
+                      href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: "#25D366" }}
+                    >
+                      <MessageCircle size={16} />
+                      {language === "en" ? "WhatsApp Us" : "হোয়াটসঅ্যাপ করুন"}
+                    </a>
+                  </div>
                 )}
               </div>
             )}
@@ -230,7 +250,7 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                 return (
                   <div
                     key={s.id}
-                    className="rounded-2xl flex flex-col p-6 gap-5"
+                    className="rounded-2xl flex flex-col p-6 gap-5 select-none"
                     style={{ backgroundColor: bg }}
                   >
                     <div>

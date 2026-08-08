@@ -58,7 +58,7 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
               return (
                 <div
                   key={tier}
-                  className="rounded-2xl bg-white flex flex-col overflow-hidden"
+                  className="rounded-2xl bg-white flex flex-col overflow-hidden select-none"
                   style={{ border: `2.5px solid ${color}` }}
                 >
                   {/* Top: big package name */}
@@ -114,7 +114,7 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                   {/* CTA */}
                   <div className="px-4 pb-5">
                     <Link
-                      href="/book-service"
+                      href={`/book-service?service=${slug}`}
                       className="block text-center py-2.5 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
                       style={{ backgroundColor: color }}
                     >

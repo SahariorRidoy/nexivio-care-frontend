@@ -348,6 +348,13 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
                 {isStatic && (
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Link
+                      href={`/book-service?service=${slug}`}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: "#16a34a" }}
+                    >
+                      {language === "en" ? "Get Now" : "এখনই নিন"}
+                    </Link>
+                    <Link
                       href="/contact"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90"
                       style={{ backgroundColor: PRIMARY }}

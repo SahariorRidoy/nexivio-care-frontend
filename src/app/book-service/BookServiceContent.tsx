@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -83,9 +84,11 @@ const STATIC_SERVICE_GROUPS: ServiceGroup[] = [
 
 
 
-export default function BookServiceContent() {
+function BookServiceInner() {
   const { t, language } = useLanguage();
   const s = useSettings();
+  const searchParams = useSearchParams();
+  const preselected = searchParams.get("service") ?? "";
   const [submitted, setSubmitted] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [serviceGroups, setServiceGroups] = useState<{ label: string; options: { value: string; label: string }[] }[]>([]);
@@ -151,8 +154,16 @@ export default function BookServiceContent() {
     resolver: zodResolver(schema),
   });
 
-  const [selectedService, setSelectedService] = useState<string>("");
+  const [selectedService, setSelectedService] = useState<string>(preselected);
   const currentPackages = (selectedService && packagesMap[selectedService]) || [];
+
+  // Pre-select service from query param once services are loaded
+  useEffect(() => {
+    if (preselected && !servicesLoading) {
+      setValue("serviceType", preselected);
+      setSelectedService(preselected);
+    }
+  }, [preselected, servicesLoading, setValue]);
 
   // Reset package when service changes
   useEffect(() => {
@@ -329,7 +340,7 @@ export default function BookServiceContent() {
                       {f.serviceType} <span className="text-red-500">*</span>
                     </label>
                     <select
-                      defaultValue=""
+                      defaultValue={preselected || ""}
                       disabled={servicesLoading}
                       className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 transition-colors cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:bg-slate-50"
                       {...register("serviceType")}
@@ -482,5 +493,13 @@ export default function BookServiceContent() {
         </div>
       </section>
     </>
+  );
+}
+
+export default function BookServiceContent() {
+  return (
+    <Suspense>
+      <BookServiceInner />
+    </Suspense>
   );
 }
