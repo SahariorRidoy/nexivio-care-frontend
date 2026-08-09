@@ -16,6 +16,7 @@ import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Button from "@/components/ui/Button";
+import PaymentCard from "@/components/shared/PaymentCard";
 
 const PRIMARY = "#0C2468";
 const HEADER_IMAGE = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200&q=85&auto=format&fit=crop";
@@ -266,6 +267,8 @@ function BookServiceInner() {
                   </a>
                 )}
               </div>
+
+              <PaymentCard />
 
               <div className="grid grid-cols-2 gap-3">
                 {[

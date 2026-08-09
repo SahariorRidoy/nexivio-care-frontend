@@ -9,6 +9,15 @@ import PageHeader from "@/components/shared/PageHeader";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import Button from "@/components/ui/Button";
+import PaymentCard from "@/components/shared/PaymentCard";
+
+function MessengerIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.477 2 2 6.145 2 11.259c0 2.928 1.453 5.542 3.727 7.26V22l3.405-1.869c.909.252 1.871.388 2.868.388 5.523 0 10-4.144 10-9.259C22 6.145 17.523 2 12 2zm1.008 12.457l-2.548-2.718-4.976 2.718 5.474-5.812 2.61 2.718 4.913-2.718-5.473 5.812z"/>
+    </svg>
+  );
+}
 
 function WhatsAppIcon({ size = 18 }: { size?: number }) {
   return (
@@ -61,19 +70,19 @@ export default function ContactContent() {
       color: "#1d4ed8", bg: "#eff6ff",
     },
     {
-      icon: Facebook,
-      labelEn: "Messenger", labelBn: "মেসেঞ্জার",
-      value: "Nexivio Care",
-      href: s.messengerUrl,
-      external: true,
-      color: "#1877f2", bg: "#eff6ff",
-    },
-    {
       icon: MapPin,
       labelEn: "Address", labelBn: "ঠিকানা",
       value: s.address,
       href: "#map",
       color: "#dc2626", bg: "#fef2f2",
+    },
+    {
+      icon: MessengerIcon,
+      labelEn: "Messenger", labelBn: "মেসেঞ্জার",
+      value: "Nexivio Care",
+      href: s.messengerUrl,
+      external: true,
+      color: "#1877f2", bg: "#eff6ff",
     },
     {
       icon: Clock,
@@ -108,121 +117,90 @@ export default function ContactContent() {
       <PageHeader title={c.title} subtitle={c.subtitle} bgImage={HEADER_IMAGE} />
 
       <section className="bg-slate-50 py-16">
-        <div className="container mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-5">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
 
-            {/* Left — Contact info + map */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-
-              {/* Contact method cards */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            {/* Left — contact info + social + payment */}
+            <div className="flex flex-col gap-5">
+              <div className="grid grid-cols-2 gap-3">
                 {contactMethods.map(({ icon: Icon, labelEn, labelBn, value, href, external, color, bg }) => {
+                  const isHours = labelEn === "Business Hours";
                   const inner = (
-                    <div className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-4">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: bg }}>
-                        <Icon size={18} style={{ color }} />
+                    <div className="flex items-start gap-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-3 h-full">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: bg }}>
+                        <Icon size={16} style={{ color }} />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-xs text-slate-400 font-medium">{isBn ? labelBn : labelEn}</p>
-                        <p className="text-sm font-semibold text-slate-800 truncate">{value}</p>
+                        <p className="text-xs font-semibold text-slate-800 break-words">{value}</p>
                       </div>
                     </div>
                   );
                   return href && href !== "#map" ? (
-                    <a key={labelEn} href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>
-                      {inner}
-                    </a>
+                    <a key={labelEn} href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>{inner}</a>
                   ) : (
                     <div key={labelEn}>{inner}</div>
                   );
                 })}
-              </div>
-
-              {/* Social links */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <p className="text-sm font-semibold mb-3" style={{ color: PRIMARY }}>
-                  {isBn ? "সোশ্যাল মিডিয়া" : "Follow Us"}
-                </p>
-                <div className="flex gap-3">
-                  {socialLinks.map(({ icon: Icon, href, label, color }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={label}
-                      className="w-10 h-10 rounded-xl flex items-center justify-center border border-gray-100 hover:scale-110 transition-transform"
-                      style={{ backgroundColor: `${color}15` }}
-                    >
-                      <Icon size={18} style={{ color }} />
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Map embed */}
-              {s.mapEmbedUrl ? (
-                <div id="map" className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-52">
-                  <iframe src={s.mapEmbedUrl} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" />
-                </div>
-              ) : (
-                <div id="map" className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-52 bg-slate-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin size={28} className="text-slate-300 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">{s.address}</p>
+                {/* Follow Us card */}
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-3 flex items-center justify-between gap-3">
+                  <p className="text-xs text-slate-400 font-medium shrink-0">{isBn ? "সোশ্যাল মিডিয়া" : "Follow Us"}</p>
+                  <div className="flex gap-1.5">
+                    {socialLinks.map(({ icon: SIcon, href: sHref, label: sLabel, color: sColor }) => (
+                      <a key={sLabel} href={sHref} target="_blank" rel="noopener noreferrer" aria-label={sLabel}
+                        className="w-9 h-9 rounded-lg flex items-center justify-center hover:scale-110 transition-transform"
+                        style={{ backgroundColor: `${sColor}15`, color: sColor }}>
+                        <SIcon size={18} />
+                      </a>
+                    ))}
                   </div>
                 </div>
-              )}
+              </div>
+
+              <PaymentCard />
             </div>
 
-            {/* Right — Form */}
-            <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="h-1.5 w-full" style={{ backgroundColor: PRIMARY }} />
-              <div className="p-8">
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold" style={{ color: PRIMARY }}>
-                    {isBn ? "আমাদের বার্তা পাঠান" : "Send Us a Message"}
-                  </h2>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {isBn ? "আমরা সাধারণত ২৪ ঘণ্টার মধ্যে উত্তর দিই।" : "We usually respond within 24 hours."}
-                  </p>
-                </div>
-
-                {submitted ? (
-                  <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
-                    <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
-                      <CheckCircle size={36} className="text-green-500" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">
-                      {isBn ? "বার্তা পাঠানো হয়েছে!" : "Message Sent!"}
-                    </h3>
-                    <p className="text-slate-500 text-sm max-w-xs">{c.success}</p>
-                    <button
-                      onClick={() => setSubmitted(false)}
-                      className="mt-2 text-sm font-semibold underline"
-                      style={{ color: PRIMARY }}
-                    >
-                      {isBn ? "আরেকটি বার্তা পাঠান" : "Send another message"}
-                    </button>
+            {/* Right — form */}
+            <div className="flex flex-col gap-5">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="h-1.5 w-full" style={{ backgroundColor: PRIMARY }} />
+                <div className="p-6">
+                  <div className="mb-5">
+                    <h2 className="text-lg font-bold" style={{ color: PRIMARY }}>
+                      {isBn ? "আমাদের বার্তা পাঠান" : "Send Us a Message"}
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {isBn ? "আমরা সাধারণত ২৪ ঘণ্টার মধ্যে উত্তর দিই।" : "We usually respond within 24 hours."}
+                    </p>
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      <Input label={c.form.name} name="name" required />
-                      <Input label={c.form.phone} name="phone" type="tel" required />
+                  {submitted ? (
+                    <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
+                      <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
+                        <CheckCircle size={36} className="text-green-500" />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-800">{isBn ? "বার্তা পাঠানো হয়েছে!" : "Message Sent!"}</h3>
+                      <p className="text-slate-500 text-sm max-w-xs">{c.success}</p>
+                      <button onClick={() => setSubmitted(false)} className="mt-2 text-sm font-semibold underline" style={{ color: PRIMARY }}>
+                        {isBn ? "আরেকটি বার্তা পাঠান" : "Send another message"}
+                      </button>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      <Input label={c.form.email} name="email" type="email" />
-                      <Input label={c.form.subject} name="subject" required />
-                    </div>
-                    <Textarea label={c.form.message} name="message" required rows={5} />
-                    <Button type="submit" size="lg" fullWidth isLoading={submitting}>
-                      <span className="flex items-center gap-2 justify-center">
-                        <Send size={15} /> {c.form.submit}
-                      </span>
-                    </Button>
-                  </form>
-                )}
+                  ) : (
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input label={c.form.name} name="name" required />
+                        <Input label={c.form.phone} name="phone" type="tel" required />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input label={c.form.email} name="email" type="email" />
+                        <Input label={c.form.subject} name="subject" required />
+                      </div>
+                      <Textarea label={c.form.message} name="message" required rows={4} />
+                      <Button type="submit" size="lg" fullWidth isLoading={submitting}>
+                        <span className="flex items-center gap-2 justify-center"><Send size={15} /> {c.form.submit}</span>
+                      </Button>
+                    </form>
+                  )}
+                </div>
               </div>
             </div>
 

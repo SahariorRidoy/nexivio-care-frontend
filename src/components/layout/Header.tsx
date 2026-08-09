@@ -178,7 +178,8 @@ export default function Header() {
     { href: "/transportation",  label: language === "en" ? "🚐 Transportation" : "🚐 পরিবহন", megaTransport: true },
     { href: "/training",       label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
     { href: "/gallery",        label: t.nav.gallery },
-    { href: "/notice-board",   label: t.nav.noticeBoard },
+    { href: "/notice-board",   label: isBn ? "নোটিশ" : "Notices" },
+    { href: "/job-application", label: isBn ? "চাকরির আবেদন" : "Job Apply" },
     { href: "/contact",        label: t.nav.contact },
   ];
 
@@ -597,7 +598,21 @@ export default function Header() {
                 </Link>
               );
             })}
-            <div className="p-3 border-t border-blue-900">
+            <div className="p-3 border-t border-blue-900 flex flex-col gap-2">
+              <Link
+                href="/notice-board"
+                onClick={() => setMenuOpen(false)}
+                className={cn("px-4 py-3 text-sm font-medium", pathname === "/notice-board" ? "bg-nav-active text-white" : "text-white/90")}
+              >
+                {isBn ? "নোটিশ" : "Notice"}
+              </Link>
+              <Link
+                href="/job-application"
+                onClick={() => setMenuOpen(false)}
+                className={cn("px-4 py-3 text-sm font-medium", pathname === "/job-application" ? "bg-nav-active text-white" : "text-white/90")}
+              >
+                {isBn ? "চাকরির আবেদন" : "Job Apply"}
+              </Link>
               <Link
                 href="/book-service"
                 onClick={() => setMenuOpen(false)}

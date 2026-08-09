@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2, Target, TrendingUp, MapPin } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
+import PaymentCard from "@/components/shared/PaymentCard";
 
 interface TeamMember {
   id: string;
@@ -288,11 +289,34 @@ export default function AboutContent() {
             <div className="mt-4 h-0.5 w-12 rounded-full bg-primary-500 mx-auto" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {/* Left — contact info cards */}
-            <div className="flex flex-col gap-4 justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left — address + map */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                <div className="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center shrink-0">
+                  <MapPin size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-0.5">{isBn ? "অফিস ঠিকানা" : "Office Address"}</p>
+                  <p className="text-slate-800 font-medium text-base">{s.address}</p>
+                </div>
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-xl border border-slate-100 flex-1" style={{ minHeight: "320px" }}>
+                <iframe
+                  src={s.mapEmbedUrl ?? `https://maps.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
+                  width="100%"
+                  height="100%"
+                  style={{ minHeight: "320px", border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+
+            {/* Right — contact info + payment */}
+            <div className="flex flex-col gap-4">
               {([
-                { icon: <MapPin size={20} className="text-white" />, label: isBn ? "অফিস ঠিকানা" : "Office Address", value: s.address, bg: "bg-primary-600" },
                 { icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন" : "Phone", value: s.phone, bg: "bg-green-600", href: `tel:${s.phone}` },
                 ...(s.phone2 ? [{ icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন ২" : "Phone 2", value: s.phone2, bg: "bg-green-600", href: `tel:${s.phone2}` }] : []),
                 { icon: <span className="text-white text-base">✉️</span>, label: isBn ? "ইমেইল" : "Email", value: s.email, bg: "bg-sky-600" },
@@ -300,34 +324,16 @@ export default function AboutContent() {
               ] as { icon: React.ReactNode; label: string; value: string; bg: string; href?: string }[]).map(({ icon, label, value, bg, href }) => {
                 const inner = (
                   <div className="flex items-start gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                    <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
-                      {icon}
-                    </div>
+                    <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>{icon}</div>
                     <div>
                       <p className="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-0.5">{label}</p>
                       <p className="text-slate-800 font-medium text-base">{value}</p>
                     </div>
                   </div>
                 );
-                return href ? (
-                  <a key={label} href={href}>{inner}</a>
-                ) : (
-                  <div key={label}>{inner}</div>
-                );
+                return href ? <a key={label} href={href}>{inner}</a> : <div key={label}>{inner}</div>;
               })}
-            </div>
-
-            {/* Right — map embed */}
-            <div className="rounded-2xl overflow-hidden shadow-xl border border-slate-100" style={{ minHeight: "380px" }}>
-              <iframe
-                src={s.mapEmbedUrl ?? `https://maps.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
-                width="100%"
-                height="100%"
-                style={{ minHeight: "380px", border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <PaymentCard />
             </div>
           </div>
         </div>
