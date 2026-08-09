@@ -5,6 +5,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 
 export interface SiteSettings {
   phone: string;
+  phone2: string;
   whatsapp: string;
   email: string;
   address: string;
@@ -26,6 +27,7 @@ export interface SiteSettings {
 // Fallback to hardcoded constants if API is unavailable
 const defaultSettings: SiteSettings = {
   phone: SITE_CONFIG.phone,
+  phone2: "",
   whatsapp: SITE_CONFIG.whatsapp,
   email: SITE_CONFIG.email,
   address: SITE_CONFIG.address,

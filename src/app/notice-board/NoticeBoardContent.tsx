@@ -5,7 +5,7 @@ import { Download, FileText, Megaphone, Briefcase, GraduationCap, RefreshCw } fr
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
-import { cn, formatDate, assetUrl } from "@/lib/utils";
+import { cn, formatDate, assetUrl, downloadFile } from "@/lib/utils";
 import type { Notice, NoticeType } from "@/types";
 
 const filterKeys = ["all", "general", "training", "circular", "job"] as const;
@@ -143,24 +143,22 @@ export default function NoticeBoardContent() {
                       </div>
                     </div>
                     {notice.documentUrl && (
-                      <a
-                        href={assetUrl(notice.documentUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => downloadFile(assetUrl(notice.documentUrl!), `notice-${notice.id}.pdf`)}
                         className="shrink-0 flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg border transition-colors"
                         style={{ color: "#0C2468", borderColor: "#0C2468" }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#0C2468";
-                          (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
+                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#0C2468";
+                          (e.currentTarget as HTMLButtonElement).style.color = "#fff";
                         }}
                         onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "";
-                          (e.currentTarget as HTMLAnchorElement).style.color = "#0C2468";
+                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "";
+                          (e.currentTarget as HTMLButtonElement).style.color = "#0C2468";
                         }}
                       >
                         <Download size={13} />
                         {nb.downloadDocument}
-                      </a>
+                      </button>
                     )}
                   </div>
                 );

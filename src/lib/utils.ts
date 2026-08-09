@@ -23,3 +23,23 @@ export function assetUrl(path?: string | null): string {
   const origin = api.replace(/\/api(\/v\d+)?\/?$/, "");
   return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
 }
+
+/**
+ * Force-download a file (works with Cloudinary URLs that lack an extension).
+ * Falls back to opening in a new tab if fetch fails.
+ */
+export async function downloadFile(url: string, filename: string): Promise<void> {
+  try {
+    const res = await fetch(url);
+    const raw = await res.blob();
+    const blob = new Blob([raw], { type: "application/pdf" });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+  } catch {
+    window.open(url, "_blank");
+  }
+}

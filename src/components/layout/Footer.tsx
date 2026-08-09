@@ -152,6 +152,13 @@ export default function Footer() {
                 <Phone size={13} className="shrink-0 text-primary-500" />
                 {s.phone}
               </a>
+              {s.phone2 && (
+                <a href={`tel:${s.phone2}`}
+                  className="flex items-center gap-2 text-xs text-slate-400 hover:text-primary-400 transition-colors">
+                  <Phone size={13} className="shrink-0 text-primary-500" />
+                  {s.phone2}
+                </a>
+              )}
               <a href={`https://wa.me/${s.whatsapp}`}
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 text-xs text-slate-400 hover:text-green-400 transition-colors">

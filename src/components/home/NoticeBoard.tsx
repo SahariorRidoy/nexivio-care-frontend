@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FileText, Bell } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
-import { assetUrl } from "@/lib/utils";
+import { assetUrl, downloadFile } from "@/lib/utils";
 import type { Notice } from "@/types";
 
 const typeConfig: Record<string, { labelBn: string; labelEn: string; bg: string }> = {
@@ -86,10 +86,11 @@ export default function NoticeBoard() {
                         {language === "en" ? notice.titleEn : notice.titleBn}
                       </p>
                       {notice.documentUrl && (
-                        <a href={assetUrl(notice.documentUrl)} target="_blank" rel="noopener noreferrer"
+                        <button
+                          onClick={() => downloadFile(assetUrl(notice.documentUrl!), `notice-${notice.id}.pdf`)}
                           className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline mt-1">
                           <FileText size={11} /> {nb.downloadDocument}
-                        </a>
+                        </button>
                       )}
                     </div>
                   </div>

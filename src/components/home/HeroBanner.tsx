@@ -5,9 +5,8 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Phone, MessageCircle, Bell, FileText, ArrowRight } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { cn } from "@/lib/utils";
+import { cn, assetUrl, downloadFile } from "@/lib/utils";
 import { api } from "@/lib/api";
-import { assetUrl } from "@/lib/utils";
 import type { Notice } from "@/types";
 
 type BannerType = "offer" | "campaign" | "training" | "service";
@@ -176,13 +175,12 @@ export default function HeroBanner() {
                             {isBn ? notice.titleBn : notice.titleEn}
                           </p>
                           {notice.documentUrl && (
-                            <a
-                              href={assetUrl(notice.documentUrl)}
-                              target="_blank" rel="noopener noreferrer"
+                            <button
+                              onClick={() => downloadFile(assetUrl(notice.documentUrl!), `notice-${notice.id}.pdf`)}
                               className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline mt-0.5"
                             >
                               <FileText size={10} /> {t.home.noticeBoard.downloadDocument}
-                            </a>
+                            </button>
                           )}
                         </div>
                       </div>

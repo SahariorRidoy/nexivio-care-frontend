@@ -260,6 +260,11 @@ function BookServiceInner() {
                 <a href={`tel:${s.phone}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-lg text-sm font-semibold">
                   <Phone size={14} /> {s.phone}
                 </a>
+                {s.phone2 && (
+                  <a href={`tel:${s.phone2}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-lg text-sm font-semibold">
+                    <Phone size={14} /> {s.phone2}
+                  </a>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

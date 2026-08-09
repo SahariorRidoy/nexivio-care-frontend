@@ -38,6 +38,13 @@ export default function ContactContent() {
       href: `tel:${s.phone}`,
       color: "#15803d", bg: "#f0fdf4",
     },
+    ...(s.phone2 ? [{
+      icon: Phone,
+      labelEn: "Phone 2", labelBn: "ফোন ২",
+      value: s.phone2,
+      href: `tel:${s.phone2}`,
+      color: "#15803d", bg: "#f0fdf4",
+    }] : []),
     {
       icon: WhatsAppIcon,
       labelEn: "WhatsApp", labelBn: "হোয়াটসঅ্যাপ",

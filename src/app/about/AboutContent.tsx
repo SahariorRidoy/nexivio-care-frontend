@@ -293,20 +293,28 @@ export default function AboutContent() {
             <div className="flex flex-col gap-4 justify-center">
               {([
                 { icon: <MapPin size={20} className="text-white" />, label: isBn ? "অফিস ঠিকানা" : "Office Address", value: s.address, bg: "bg-primary-600" },
-                { icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন" : "Phone", value: s.phone, bg: "bg-green-600" },
+                { icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন" : "Phone", value: s.phone, bg: "bg-green-600", href: `tel:${s.phone}` },
+                ...(s.phone2 ? [{ icon: <span className="text-white text-base">📞</span>, label: isBn ? "ফোন ২" : "Phone 2", value: s.phone2, bg: "bg-green-600", href: `tel:${s.phone2}` }] : []),
                 { icon: <span className="text-white text-base">✉️</span>, label: isBn ? "ইমেইল" : "Email", value: s.email, bg: "bg-sky-600" },
                 ...(s.businessHours ? [{ icon: <span className="text-white text-base">🕐</span>, label: isBn ? "অফিস সময়" : "Business Hours", value: s.businessHours, bg: "bg-amber-500" }] : []),
-              ] as { icon: React.ReactNode; label: string; value: string; bg: string }[]).map(({ icon, label, value, bg }) => (
-                <div key={label} className="flex items-start gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-                  <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
-                    {icon}
+              ] as { icon: React.ReactNode; label: string; value: string; bg: string; href?: string }[]).map(({ icon, label, value, bg, href }) => {
+                const inner = (
+                  <div className="flex items-start gap-4 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
+                      {icon}
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-0.5">{label}</p>
+                      <p className="text-slate-800 font-medium text-base">{value}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-0.5">{label}</p>
-                    <p className="text-slate-800 font-medium text-base">{value}</p>
-                  </div>
-                </div>
-              ))}
+                );
+                return href ? (
+                  <a key={label} href={href}>{inner}</a>
+                ) : (
+                  <div key={label}>{inner}</div>
+                );
+              })}
             </div>
 
             {/* Right — map embed */}
