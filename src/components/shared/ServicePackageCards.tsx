@@ -7,20 +7,26 @@ import type { ServicePackage } from "@/types";
 
 const TIER_ORDER: ServicePackage["tier"][] = ["basic", "standard", "premium"];
 
-const COLOR_PALETTE = [
-  "#9B2257",
-  "#0C2468",
-  "#0e7490",
-  "#15803d",
-  "#7c3aed",
-  "#b45309",
-  "#be123c",
-  "#0369a1",
-];
+const SLUG_COLORS: Record<string, string> = {
+  "nursing-service":       "#1d4ed8",
+  "caregiver-service":     "#0891b2",
+  "baby-nanny-care":       "#7c3aed",
+  "elder-care":            "#15803d",
+  "other-services":        "#0369a1",
+  "caregiver-training":    "#6d28d9",
+  "baby-care-training":    "#0e7490",
+  "elder-care-training":   "#16a34a",
+  "basic-nursing-training":"#4f46e5",
+  "home-care-training":    "#059669",
+  "other-training":        "#2563eb",
+};
+
+const FALLBACK_COLORS = ["#1d4ed8", "#0891b2", "#7c3aed", "#15803d", "#0369a1"];
 
 export function slugColor(slug: string): string {
+  if (SLUG_COLORS[slug]) return SLUG_COLORS[slug];
   const hash = slug.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return COLOR_PALETTE[hash % COLOR_PALETTE.length];
+  return FALLBACK_COLORS[hash % FALLBACK_COLORS.length];
 }
 
 interface Props {
