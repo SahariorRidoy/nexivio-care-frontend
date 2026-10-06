@@ -140,7 +140,7 @@ export default function HomeTeam() {
                 const role = isBn ? m.roleBn : m.roleEn;
                 return (
                   <div key={m.id} className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="aspect-4/3 bg-slate-100 overflow-hidden">
+                    <div className="aspect-square bg-slate-100 overflow-hidden">
                       {m.image ? (
                         <img src={m.image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (

@@ -50,13 +50,26 @@ export default function FloatingButtons() {
     a.href = URL.createObjectURL(blob);
     a.download = "nexivio-care.vcf";
     a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  async function downloadVisitingCard() {
+    if (!s.visitingCardUrl) return;
+    const res = await fetch(s.visitingCardUrl);
+    const blob = await res.blob();
+    const ext = blob.type.includes("png") ? "png" : "jpg";
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `nexivio-care-visiting-card.${ext}`;
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
   return (
-    <div ref={ref} className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div ref={ref} className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-2 md:gap-3">
       {/* QR Popup */}
       {open && (
-        <div className="mb-1 w-72 rounded-2xl bg-white shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="mb-1 w-64 md:w-72 rounded-2xl bg-white shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between bg-[#0a1628] px-4 py-3">
             <div className="flex items-center gap-2">
@@ -109,27 +122,40 @@ export default function FloatingButtons() {
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-2 gap-2 px-4 pb-4 pt-2">
-            <a
-              href={waHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-[#25d366] py-2 text-[11px] font-semibold text-white hover:bg-[#20ba5a] transition-colors"
-            >
-              <svg viewBox="0 0 32 32" width="13" height="13" fill="white">
-                <path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.735 5.474 2.02 7.775L0 32l8.469-2.222A15.929 15.929 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.273 19.346c-.397-.2-2.352-1.16-2.717-1.293-.364-.133-.63-.2-.895.2-.265.4-1.028 1.293-1.26 1.56-.232.267-.464.3-.862.1-.397-.2-1.677-.618-3.195-1.972-1.18-1.054-1.977-2.355-2.21-2.754-.232-.4-.025-.616.175-.815.18-.178.397-.464.596-.696.2-.232.265-.4.397-.664.133-.265.067-.497-.033-.697-.1-.2-.895-2.156-1.227-2.952-.322-.775-.648-.67-.895-.682-.232-.011-.497-.014-.762-.014a1.46 1.46 0 0 0-1.06.497c-.364.4-1.39 1.36-1.39 3.315s1.423 3.847 1.622 4.113c.2.265 2.8 4.275 6.782 5.993.948.41 1.688.655 2.265.838.952.303 1.818.26 2.502.158.763-.113 2.352-.962 2.683-1.89.332-.928.332-1.723.232-1.89-.1-.166-.364-.265-.762-.464z" />
-              </svg>
-              WhatsApp
-            </a>
-            <button
-              onClick={downloadVCard}
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-[#0a1628] py-2 text-[11px] font-semibold text-white hover:bg-[#1a2d4a] transition-colors"
-            >
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-              </svg>
-              কন্টাক্ট সেভ
-            </button>
+          <div className="flex flex-col gap-2 px-4 pb-4 pt-2">
+            <div className="grid grid-cols-2 gap-2">
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#25d366] py-2 text-[11px] font-semibold text-white hover:bg-[#20ba5a] transition-colors"
+              >
+                <svg viewBox="0 0 32 32" width="13" height="13" fill="white">
+                  <path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.735 5.474 2.02 7.775L0 32l8.469-2.222A15.929 15.929 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.273 19.346c-.397-.2-2.352-1.16-2.717-1.293-.364-.133-.63-.2-.895.2-.265.4-1.028 1.293-1.26 1.56-.232.267-.464.3-.862.1-.397-.2-1.677-.618-3.195-1.972-1.18-1.054-1.977-2.355-2.21-2.754-.232-.4-.025-.616.175-.815.18-.178.397-.464.596-.696.2-.232.265-.4.397-.664.133-.265.067-.497-.033-.697-.1-.2-.895-2.156-1.227-2.952-.322-.775-.648-.67-.895-.682-.232-.011-.497-.014-.762-.014a1.46 1.46 0 0 0-1.06.497c-.364.4-1.39 1.36-1.39 3.315s1.423 3.847 1.622 4.113c.2.265 2.8 4.275 6.782 5.993.948.41 1.688.655 2.265.838.952.303 1.818.26 2.502.158.763-.113 2.352-.962 2.683-1.89.332-.928.332-1.723.232-1.89-.1-.166-.364-.265-.762-.464z" />
+                </svg>
+                WhatsApp
+              </a>
+              <button
+                onClick={downloadVCard}
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#0a1628] py-2 text-[11px] font-semibold text-white hover:bg-[#1a2d4a] transition-colors"
+              >
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+                </svg>
+                কন্টাক্ট সেভ
+              </button>
+            </div>
+            {s.visitingCardUrl && (
+              <button
+                onClick={downloadVisitingCard}
+                className="flex items-center justify-center gap-1.5 rounded-lg border border-primary-400 py-2 text-[11px] font-semibold text-primary-400 hover:bg-primary-50 transition-colors w-full"
+              >
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                </svg>
+                ভিজিটিং কার্ড ডাউনলোড
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -140,7 +166,7 @@ export default function FloatingButtons() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] shadow-xl hover:scale-110 transition-transform"
+        className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full bg-[#25d366] shadow-xl hover:scale-110 transition-transform"
       >
         {WA_ICON}
       </a>
@@ -149,7 +175,7 @@ export default function FloatingButtons() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Show QR Code"
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0a1628] text-white shadow-xl hover:bg-[#1a2d4a] transition-colors border-2 border-primary-500"
+        className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full bg-[#0a1628] text-white shadow-xl hover:bg-[#1a2d4a] transition-colors border-2 border-primary-500"
       >
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
           <rect x="3" y="3" width="7" height="7" rx="1" />

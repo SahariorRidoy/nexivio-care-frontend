@@ -34,6 +34,8 @@ export const en = {
     selectService: "Select Service",
     paymentMethod: "Payment Method",
     experience: "Experience",
+    skilled: "Skilled",
+    skilledAndExperienced: "Skilled & Experienced",
     education: "Education",
     notes: "Additional Notes",
     filter: "Filter",
@@ -207,6 +209,7 @@ export const en = {
       babyCare: "Baby / Nanny Care",
       elderCare: "Elder Care",
       others: "Other Services",
+      homeDiagnostics: "Home Diagnostics",
     },
     detail: {
       description: "Description",

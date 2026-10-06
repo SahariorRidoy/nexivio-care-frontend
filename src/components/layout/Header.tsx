@@ -171,16 +171,16 @@ export default function Header() {
   const isBn = language === "bn";
 
   const navLinks = [
-    { href: "/",               label: t.nav.home },
-    { href: "/about",          label: t.nav.about, megaAbout: true },
-    { href: "/services",       label: language === "en" ? "Our Services" : "আমাদের সেবা", children: serviceChildren },
-    { href: "/other-services", label: language === "en" ? "Additional Services" : "অতিরিক্ত সেবা", children: otherServiceChildren },
-    { href: "/transportation",  label: language === "en" ? "🚐 Transportation" : "🚐 পরিবহন", megaTransport: true },
-    { href: "/training",       label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ", children: trainingChildren },
-    { href: "/gallery",        label: t.nav.gallery },
-    { href: "/notice-board",   label: isBn ? "নোটিশ" : "Notices" },
-    { href: "/job-application", label: isBn ? "চাকরির আবেদন" : "Job Apply" },
-    { href: "/contact",        label: t.nav.contact },
+    { href: "/",               label: t.nav.home,                                                    labelShort: isBn ? "হোম" : "Home" },
+    { href: "/about",          label: t.nav.about,                                                   labelShort: isBn ? "পরিচিতি" : "About",       megaAbout: true },
+    { href: "/services",       label: language === "en" ? "Our Services" : "আমাদের সেবা",           labelShort: isBn ? "সেবা" : "Services",       children: serviceChildren },
+    { href: "/other-services", label: language === "en" ? "Additional Services" : "অতিরিক্ত সেবা", labelShort: isBn ? "অতি. সেবা" : "Add. Services", children: otherServiceChildren },
+    { href: "/transportation",  label: language === "en" ? "🚐 Transportation" : "🚐 পরিবহন",       labelShort: isBn ? "পরিবহন" : "Transport",    megaTransport: true },
+    { href: "/training",       label: language === "en" ? "Training" : "প্রশিক্ষণসমূহ",            labelShort: isBn ? "প্রশিক্ষণ" : "Training",  children: trainingChildren },
+    { href: "/gallery",        label: t.nav.gallery,                                                 labelShort: isBn ? "গ্যালারি" : "Gallery" },
+    { href: "/notice-board",   label: isBn ? "নোটিশ" : "Notices",                                  labelShort: isBn ? "নোটিশ" : "Notices" },
+    { href: "/job-application", label: isBn ? "চাকরির আবেদন" : "Job Apply",                        labelShort: isBn ? "চাকরি" : "Job" },
+    { href: "/contact",        label: t.nav.contact,                                                 labelShort: isBn ? "যোগাযোগ" : "Contact" },
   ];
 
   return (
@@ -205,8 +205,8 @@ export default function Header() {
               </div>
             </Link>
 
-            {/* Contact blocks (hidden on small screens) */}
-            <div className="hidden md:flex items-center gap-5 lg:gap-8">
+            {/* Contact blocks — only on large screens */}
+            <div className="hidden lg:flex items-center gap-5 lg:gap-8">
               {/* Phone */}
               <a href={`tel:${s.phone}`}
                 className="flex items-center gap-3 group">
@@ -266,17 +266,23 @@ export default function Header() {
               const isActive = link.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(link.href);
+              const displayLabel = (
+                <>
+                  <span className="xl:hidden">{link.labelShort}</span>
+                  <span className="hidden xl:inline">{link.label}</span>
+                </>
+              );
               if ("megaAbout" in link && link.megaAbout) {
                 return (
                   <div key={link.href} className="relative group h-full flex items-center">
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
+                        "flex items-center gap-1 h-full px-2.5 xl:px-4 text-xs xl:text-sm font-medium transition-colors",
                         isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
                       )}
                     >
-                      {link.label} <ChevronDown size={13} />
+                      {displayLabel} <ChevronDown size={13} />
                     </Link>
                     {/* Mega dropdown */}
                     <div className="absolute top-full left-0 z-50 hidden group-hover:flex bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[480px]">
@@ -349,11 +355,11 @@ export default function Header() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
+                        "flex items-center gap-1 h-full px-2.5 xl:px-4 text-xs xl:text-sm font-medium transition-colors",
                         isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
                       )}
                     >
-                      {link.label} <ChevronDown size={13} />
+                      {displayLabel} <ChevronDown size={13} />
                     </Link>
                     <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-xl min-w-[220px] border-t-2 border-primary-600 rounded-b-lg py-1">
                       {link.children.map(child => (
@@ -377,11 +383,11 @@ export default function Header() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 h-full px-4 text-sm font-medium transition-colors",
+                        "flex items-center gap-1 h-full px-2.5 xl:px-4 text-xs xl:text-sm font-medium transition-colors",
                         isActive ? "bg-nav-active text-white" : "text-white/90 hover:bg-nav-hover hover:text-white"
                       )}
                     >
-                      {link.label} <ChevronDown size={13} />
+                      {displayLabel} <ChevronDown size={13} />
                     </Link>
                     {/* Transport mega dropdown: 7 categories */}
                     <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[260px]">
@@ -447,13 +453,14 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center h-full px-4 text-sm font-medium transition-colors",
+                    "flex items-center h-full px-2.5 xl:px-4 text-xs xl:text-sm font-medium transition-colors",
                     isActive
                       ? "bg-nav-active text-white"
                       : "text-white/90 hover:bg-nav-hover hover:text-white"
                   )}
                 >
-                  {link.label}
+                  <span className="xl:hidden">{link.labelShort}</span>
+                  <span className="hidden xl:inline">{link.label}</span>
                 </Link>
               );
             })}
@@ -461,7 +468,7 @@ export default function Header() {
             <div className="ml-auto flex items-center h-full py-1.5 pr-1">
               <Link
                 href="/book-service"
-                className="flex items-center h-full px-5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded transition-colors"
+                className="flex items-center h-full px-3 xl:px-5 bg-primary-600 hover:bg-primary-700 text-white text-xs xl:text-sm font-bold rounded transition-colors whitespace-nowrap"
               >
                 {t.common.bookService}
               </Link>

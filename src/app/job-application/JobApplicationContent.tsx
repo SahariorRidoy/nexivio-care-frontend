@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Briefcase, Upload, GraduationCap, ClipboardList, ChevronRight, Phone } from "lucide-react";
+import { CheckCircle, Briefcase, Upload, GraduationCap, ClipboardList, ChevronRight, Phone, Star } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
@@ -18,8 +18,9 @@ const ACCENT = "#2563eb";
 
 const PERKS = [
   { icon: Briefcase,     en: "Competitive salary & benefits",       bn: "প্রতিযোগিতামূলক বেতন ও সুবিধা" },
-  { icon: GraduationCap, en: "Free professional training",           bn: "বিনামূল্যে পেশাদার প্রশিক্ষণ" },
+  { icon: Star,          en: "Experienced & skilled professionals",  bn: "অভিজ্ঞ ও দক্ষ পেশাদার" },
   { icon: ChevronRight,  en: "Career growth opportunities",          bn: "ক্যারিয়ার উন্নয়নের সুযোগ" },
+  { icon: GraduationCap, en: "Free professional training",           bn: "বিনামূল্যে পেশাদার প্রশিক্ষণ" },
   { icon: ClipboardList, en: "Supportive work environment",          bn: "সহায়ক কর্মপরিবেশ" },
 ];
 

@@ -198,8 +198,26 @@ export default function Footer() {
                 className="mt-1 cursor-pointer flex items-center gap-1.5 text-xs font-medium text-primary-400 hover:text-primary-300 transition-colors w-fit"
               >
                 <Download size={13} />
-                Download Card
+                Download Contact
               </button>
+              {s.visitingCardUrl && (
+                <button
+                  onClick={async () => {
+                    const res = await fetch(s.visitingCardUrl!);
+                    const blob = await res.blob();
+                    const ext = blob.type.includes("png") ? "png" : "jpg";
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `nexivio-care-visiting-card.${ext}`;
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                  }}
+                  className="cursor-pointer flex items-center gap-1.5 text-xs font-medium text-primary-400 hover:text-primary-300 transition-colors w-fit"
+                >
+                  <Download size={13} />
+                  Download Visiting Card
+                </button>
+              )}
             </div>
           </div>
 

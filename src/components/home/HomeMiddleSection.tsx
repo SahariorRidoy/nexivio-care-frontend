@@ -30,7 +30,8 @@ export default function HomeMiddleSection() {
     t.services.categories.caregiver,
     t.services.categories.babyCare,
     t.services.categories.elderCare,
-    t.common.experience,
+    t.services.categories.homeDiagnostics,
+    t.common.skilledAndExperienced,
   ];
 
   return (

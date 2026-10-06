@@ -34,6 +34,8 @@ export const bn = {
     selectService: "সেবা নির্বাচন করুন",
     paymentMethod: "পেমেন্ট পদ্ধতি",
     experience: "অভিজ্ঞতা",
+    skilled: "দক্ষ",
+    skilledAndExperienced: "দক্ষ ও অভিজ্ঞ",
     education: "শিক্ষাগত যোগ্যতা",
     notes: "অতিরিক্ত নোট",
     filter: "ফিল্টার",
@@ -207,6 +209,7 @@ export const bn = {
       babyCare: "বেবি / ন্যানী কেয়ার",
       elderCare: "এল্ডার কেয়ার",
       others: "অন্যান্য সেবা",
+      homeDiagnostics: "হোম ডায়াগনস্টিক্স",
     },
     detail: {
       description: "বিবরণ",

@@ -97,6 +97,7 @@ function BookServiceInner() {
   const [servicesLoading, setServicesLoading] = useState(true);
   const [packagesMap, setPackagesMap] = useState<ServiceMap>({});
   const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(null);
+  const [packageError, setPackageError] = useState<string>("");
   const [pricingPeriod, setPricingPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const isBn = language === "bn";
   const f = t.bookService.form;
@@ -170,10 +171,15 @@ function BookServiceInner() {
   // Reset package when service changes
   useEffect(() => {
     setSelectedPackage(null);
+    setPackageError("");
     setValue("packageName", undefined);
   }, [selectedService, setValue]);
 
   const onSubmit = async (data: FormData) => {
+    if (currentPackages.length > 0 && !selectedPackage) {
+      setPackageError(isBn ? "অনুগ্রহ করে একটি প্যাকেজ বেছে নিন" : "Please select a package");
+      return;
+    }
     const amount = selectedPackage
       ? pricingPeriod === "daily" ? selectedPackage.dailyPrice
       : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice
@@ -382,7 +388,7 @@ function BookServiceInner() {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         <label className="text-sm font-medium text-slate-700">
-                          {isBn ? "প্যাকেজ বেছে নিন" : "Select Package"}
+                          {isBn ? "প্যাকেজ বেছে নিন" : "Select Package"} <span className="text-red-500">*</span>
                         </label>
                         {/* Pricing period toggle */}
                         <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-semibold">
@@ -418,11 +424,12 @@ function BookServiceInner() {
                               type="button"
                               onClick={() => {
                                 setSelectedPackage(pkg);
+                                setPackageError("");
                                 setValue("packageName", isBn ? pkg.nameBn : pkg.nameEn);
                               }}
                               className="flex flex-col gap-1 p-4 rounded-xl border-2 text-left transition-all"
                               style={isSelected
-                                ? { borderColor: PRIMARY, backgroundColor: "#eff6ff" }
+                                ? { borderColor: PRIMARY, backgroundColor: "#dbeafe", boxShadow: `0 0 0 3px ${PRIMARY}22` }
                                 : { borderColor: "#e2e8f0", backgroundColor: "#fff" }
                               }
                             >
@@ -434,9 +441,15 @@ function BookServiceInner() {
                                   {isBn ? pkg.descriptionBn : pkg.descriptionEn}
                                 </span>
                               )}
-                              <span className="text-base font-bold" style={{ color: PRIMARY }}>
+                              <span
+                                className="mt-1 inline-flex items-baseline gap-0.5 rounded-lg px-2 py-1 text-lg font-extrabold"
+                                style={isSelected
+                                  ? { backgroundColor: PRIMARY, color: "#fff" }
+                                  : { backgroundColor: "#f1f5f9", color: PRIMARY }
+                                }
+                              >
                                 ৳{price.toLocaleString()}
-                                <span className="text-xs font-normal text-slate-400"> /{periodLabel}</span>
+                                <span className="text-[10px] font-normal" style={{ color: isSelected ? "#bfdbfe" : "#94a3b8" }}>/{periodLabel}</span>
                               </span>
                               <span className="text-xs text-slate-500">{pkg.dutyHours}h {isBn ? "ডিউটি" : "duty"}</span>
                             </button>
@@ -444,13 +457,15 @@ function BookServiceInner() {
                         })}
                       </div>
 
+                      {packageError && <p className="text-xs text-red-500">{packageError}</p>}
+
                       {/* Selected package amount summary */}
                       {selectedPackage && (
-                        <div className="mt-1 flex items-center justify-between rounded-lg bg-blue-50 px-4 py-2.5 border border-blue-100">
-                          <span className="text-sm text-slate-600">
-                            {isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <strong>{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</strong>
+                        <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 border-2" style={{ backgroundColor: PRIMARY, borderColor: PRIMARY }}>
+                          <span className="text-sm font-semibold text-white">
+                            {isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <span className="opacity-80">{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</span>
                           </span>
-                          <span className="text-base font-bold" style={{ color: PRIMARY }}>
+                          <span className="text-lg font-extrabold text-white">
                             ৳{(pricingPeriod === "daily" ? selectedPackage.dailyPrice : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice : selectedPackage.monthlyPrice).toLocaleString()}
                           </span>
                         </div>
