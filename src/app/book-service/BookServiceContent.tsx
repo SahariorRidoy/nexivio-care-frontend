@@ -28,6 +28,7 @@ const schema = z.object({
   patientName: z.string().min(2),
   patientGender: z.enum(["male", "female", "other"]),
   relationship: z.string().min(1),
+  patientCondition: z.string().optional(),
   serviceType: z.string().min(1),
   packageName: z.string().optional(),
   date: z.string().min(1),
@@ -341,6 +342,11 @@ function BookServiceInner() {
                         {...register("relationship")}
                       />
                     </div>
+                    <Textarea
+                      label={f.patientCondition}
+                      rows={2}
+                      {...register("patientCondition")}
+                    />
                   </div>
 
                   <div className="flex flex-col gap-1">

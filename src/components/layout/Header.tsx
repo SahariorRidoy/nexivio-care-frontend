@@ -384,10 +384,25 @@ export default function Header() {
                       {link.label} <ChevronDown size={13} />
                     </Link>
                     {/* Transport mega dropdown: 7 categories */}
-                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[240px]">
-                      <div className="py-2">
-                        <p className="text-[10px] font-bold tracking-widest uppercase text-primary-600 px-4 pt-2 pb-3">
-                          {isBn ? "🚐 পরিবহন সেবা" : "🚐 Transportation Services"}
+                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[260px]">
+                      {/* ── Highlighted action buttons ── */}
+                      <div className="px-3 pt-3 pb-2 flex flex-col gap-2">
+                        <Link
+                          href="/transportation/book"
+                          className="flex items-center justify-center gap-2 w-full py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
+                        >
+                          🚐 {isBn ? "এখনই বুক করুন" : "Book Now"}
+                        </Link>
+                        <Link
+                          href="/transportation/register-vehicle"
+                          className="flex items-center justify-center gap-2 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
+                        >
+                          🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
+                        </Link>
+                      </div>
+                      <div className="border-t border-slate-100 py-1">
+                        <p className="text-[10px] font-bold tracking-widest uppercase text-primary-600 px-4 pt-2 pb-1">
+                          {isBn ? "পরিবহন সেবা" : "Transport Categories"}
                         </p>
                         {TRANSPORT_CATEGORIES.map((cat) => (
                           <div key={cat.slug} className="group/cat relative">
@@ -422,11 +437,6 @@ export default function Header() {
                             )}
                           </div>
                         ))}
-                        <div className="border-t border-slate-100 mx-4 mt-2 pt-2">
-                          <Link href="/transportation/register-vehicle" className="flex items-center gap-2 text-xs font-semibold text-primary-600 hover:text-primary-800 py-1">
-                            🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
-                          </Link>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -551,34 +561,46 @@ export default function Header() {
                     </button>
                     {transportationOpen && (
                       <div className="bg-nav-active pl-4">
-                        {TRANSPORT_CATEGORIES.map((cat) => (
-                          <div key={cat.slug}>
-                            <Link
-                              href={cat.href}
-                              onClick={() => setMenuOpen(false)}
-                              className="block px-4 py-2 text-sm font-semibold text-white/90 hover:text-white"
-                            >
-                              {isBn ? cat.labelBn : cat.labelEn}
-                            </Link>
-                            {cat.vehicles.map((v) => (
+                        {/* Highlighted action buttons in mobile */}
+                        <div className="px-4 py-3 flex flex-col gap-2">
+                          <Link
+                            href="/transportation/book"
+                            onClick={() => setMenuOpen(false)}
+                            className="block text-center py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors"
+                          >
+                            🚐 {isBn ? "এখনই বুক করুন" : "Book Now"}
+                          </Link>
+                          <Link
+                            href="/transportation/register-vehicle"
+                            onClick={() => setMenuOpen(false)}
+                            className="block text-center py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg transition-colors"
+                          >
+                            🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
+                          </Link>
+                        </div>
+                        <div className="border-t border-white/10">
+                          {TRANSPORT_CATEGORIES.map((cat) => (
+                            <div key={cat.slug}>
                               <Link
-                                key={v.href}
-                                href={v.href}
+                                href={cat.href}
                                 onClick={() => setMenuOpen(false)}
-                                className="block pl-6 pr-4 py-1.5 text-xs text-white/60 hover:text-white"
+                                className="block px-4 py-2 text-sm font-semibold text-white/90 hover:text-white"
                               >
-                                {isBn ? v.labelBn : v.labelEn}
+                                {isBn ? cat.labelBn : cat.labelEn}
                               </Link>
-                            ))}
-                          </div>
-                        ))}
-                        <Link
-                          href="/transportation/register-vehicle"
-                          onClick={() => setMenuOpen(false)}
-                          className="block px-4 py-2.5 text-sm text-white/70 hover:text-white border-t border-white/10 mt-1"
-                        >
-                          🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
-                        </Link>
+                              {cat.vehicles.map((v) => (
+                                <Link
+                                  key={v.href}
+                                  href={v.href}
+                                  onClick={() => setMenuOpen(false)}
+                                  className="block pl-6 pr-4 py-1.5 text-xs text-white/60 hover:text-white"
+                                >
+                                  {isBn ? v.labelBn : v.labelEn}
+                                </Link>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>

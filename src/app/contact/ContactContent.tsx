@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Phone, Mail, Facebook, CheckCircle, MapPin, Clock, Send, Youtube, Instagram, Linkedin } from "lucide-react";
+import { Phone, Mail, Facebook, CheckCircle, MapPin, Clock, Send, Youtube, Instagram, Linkedin, Download } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { api } from "@/lib/api";
@@ -36,6 +36,7 @@ export default function ContactContent() {
   const s = useSettings();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const c = t.contact;
   const isBn = language === "bn";
 
@@ -100,6 +101,26 @@ export default function ContactContent() {
     { icon: Linkedin,  href: s.linkedinUrl,  label: "LinkedIn",  color: "#0a66c2" },
   ];
 
+  const handleDownloadCard = async () => {
+    if (!s.visitingCardUrl) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(s.visitingCardUrl);
+      const blob = await res.blob();
+      const ext = blob.type.includes("pdf") ? "pdf" : blob.type.split("/")[1] || "png";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `nexivio-care-visiting-card.${ext}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(s.visitingCardUrl, "_blank");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
@@ -158,6 +179,36 @@ export default function ContactContent() {
               </div>
 
               <PaymentCard />
+
+              {/* Visiting Card Download */}
+              {s.visitingCardUrl && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="h-1 w-full bg-gradient-to-r from-primary-700 to-blue-500" />
+                  <div className="p-4 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: "#eff6ff" }}>
+                      <span className="text-2xl">🪪</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-800">
+                        {isBn ? "ভিজিটিং কার্ড" : "Visiting Card"}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {isBn ? "আমাদের ভিজিটিং কার্ড ডাউনলোড করুন" : "Download our visiting card"}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleDownloadCard}
+                      disabled={downloading}
+                      className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors shrink-0"
+                    >
+                      <Download size={15} />
+                      {downloading
+                        ? (isBn ? "ডাউনলোড হচ্ছে..." : "Downloading...")
+                        : (isBn ? "ডাউনলোড" : "Download")}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right — form */}

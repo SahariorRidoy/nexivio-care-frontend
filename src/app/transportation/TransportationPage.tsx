@@ -40,6 +40,24 @@ export default function TransportationPage() {
         bgImage="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&q=80&auto=format&fit=crop"
       />
 
+      {/* ── Quick Action Buttons ── */}
+      <div className="bg-white border-b border-slate-100 py-4 shadow-sm">
+        <div className="container mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/transportation/book"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-base shadow-md hover:shadow-lg transition-all"
+          >
+            🚐 Book Transport Now
+          </Link>
+          <Link
+            href="/transportation/register-vehicle"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-base shadow-md hover:shadow-lg transition-all"
+          >
+            🚗 Register Your Vehicle
+          </Link>
+        </div>
+      </div>
+
       {/* Categories */}
       <section className="bg-white py-14">
         <div className="container mx-auto max-w-7xl px-4">

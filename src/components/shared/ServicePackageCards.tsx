@@ -152,14 +152,26 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
           <li className="flex items-start gap-2">
             <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             {language === "en"
-              ? "Clients may request a replacement service provider during these 2 off days; in such cases, a replacement charge will be added."
-              : "ক্লায়েন্টরা এই ২ দিনের ছুটিতে বিকল্প সেবা প্রদানকারী চাইতে পারেন; সেক্ষেত্রে একটি রিপ্লেসমেন্ট চার্জ যোগ হবে।"}
+              ? "Replacement during off days is available upon request and may incur an additional charge."
+              : "ছুটির দিনে অনুরোধের ভিত্তিতে বিকল্প সেবা প্রদানকারী পাওয়া যাবে, তবে অতিরিক্ত চার্জ প্রযোজ্য হতে পারে।"}
           </li>
           <li className="flex items-start gap-2">
             <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             {language === "en"
-              ? "Clients must provide at least one meal per day. If a meal is not provided, a charge of BDT 3,000/month will be added as meal allowance. For 24-hour duty, providing meals is mandatory."
-              : "ক্লায়েন্টদের প্রতিদিন কমপক্ষে একটি খাবার সরবরাহ করতে হবে। খাবার না দিলে মাসিক ৳৩,০০০ মিল অ্যালাউন্স যোগ হবে। ২৪ ঘণ্টার ডিউটিতে খাবার সরবরাহ বাধ্যতামূলক।"}
+              ? "Clients must provide at least one meal per day. If not provided, BDT 3,000/month meal allowance will apply. For 24-hour duty, meals are mandatory."
+              : "ক্লায়েন্টদের প্রতিদিন কমপক্ষে একটি খাবার সরবরাহ করতে হবে। না দিলে মাসিক ৳৩,০০০ মিল অ্যালাউন্স যোগ হবে। ২৪ ঘণ্টার ডিউটিতে খাবার সরবরাহ বাধ্যতামূলক।"}
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            {language === "en"
+              ? "Additional service hours or special requirements will incur applicable extra charges."
+              : "অতিরিক্ত সেবার সময় বা বিশেষ চাহিদার জন্য প্রযোজ্য অতিরিক্ত চার্জ প্রযোজ্য হবে।"}
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            {language === "en"
+              ? "Timely payment and prior notice are required for service continuation, cancellation, or rescheduling."
+              : "সেবা চালিয়ে যাওয়া, বাতিল বা পুনর্নির্ধারণের জন্য সময়মতো পেমেন্ট এবং আগাম নোটিশ প্রয়োজন।"}
           </li>
         </ul>
       </div>

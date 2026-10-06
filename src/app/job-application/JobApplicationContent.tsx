@@ -28,6 +28,7 @@ export default function JobApplicationContent() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [nidFileName, setNidFileName] = useState<string | null>(null);
   const [headerImage, setHeaderImage] = useState<string>(SPLASH_IMAGES[0]);
   const f = t.jobApplication.form;
   const isBn = language === "bn";
@@ -147,6 +148,32 @@ export default function JobApplicationContent() {
                         required
                         className="hidden"
                         onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+                      />
+                    </label>
+                  </div>
+
+                  {/* NID Upload */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium text-slate-700">
+                      {f.nid} <span className="text-red-500">*</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl px-4 py-4 transition-colors">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "#eff6ff" }}>
+                        <Upload size={16} style={{ color: ACCENT }} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-700">
+                          {nidFileName ?? (isBn ? "NID ছবি বেছে নিন" : "Choose NID image")}
+                        </span>
+                        <span className="text-xs text-slate-400">{isBn ? "JPG / PNG, সর্বোচ্চ ৫ MB" : "JPG / PNG, max 5 MB"}</span>
+                      </div>
+                      <input
+                        name="nid"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        required
+                        className="hidden"
+                        onChange={(e) => setNidFileName(e.target.files?.[0]?.name ?? null)}
                       />
                     </label>
                   </div>

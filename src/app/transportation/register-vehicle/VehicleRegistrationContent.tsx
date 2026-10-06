@@ -29,7 +29,10 @@ export default function VehicleRegistrationContent() {
   const [submitting, setSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [nidPreview, setNidPreview] = useState<string | null>(null);
+  const [nidFile, setNidFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const nidInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -44,6 +47,19 @@ export default function VehicleRegistrationContent() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleNidChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setNidFile(file);
+    setNidPreview(URL.createObjectURL(file));
+  };
+
+  const removeNid = () => {
+    setNidFile(null);
+    setNidPreview(null);
+    if (nidInputRef.current) nidInputRef.current.value = "";
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
@@ -54,10 +70,12 @@ export default function VehicleRegistrationContent() {
       fd.set("acAvailable", form.querySelector<HTMLInputElement>('[name="acAvailable"]')?.checked ? "true" : "false");
       fd.set("driverIncluded", form.querySelector<HTMLInputElement>('[name="driverIncluded"]')?.checked ? "true" : "false");
       if (imageFile) fd.set("image", imageFile);
+      if (nidFile) fd.set("nidImage", nidFile);
       await api.upload("/vehicle-registrations", fd);
       toast.success("Vehicle registration submitted! We will review and contact you.");
       form.reset();
       removeImage();
+      removeNid();
       window.scrollTo({ top: 0, behavior: "smooth" });
       setSubmitted(true);
     } catch {
@@ -140,10 +158,33 @@ export default function VehicleRegistrationContent() {
                       <Input label="Phone Number" name="ownerPhone" type="tel" required />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <Input label="NID Number" name="ownerNid" placeholder="National ID No." />
                       <Input label="Email (optional)" name="ownerEmail" type="email" />
+                      <Input label="Address" name="ownerAddress" />
                     </div>
-                    <Input label="Address" name="ownerAddress" />
+                    {/* NID Image Upload */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-medium text-slate-700">NID Card Image <span className="text-red-500">*</span></label>
+                      {nidPreview ? (
+                        <div className="relative w-full rounded-xl overflow-hidden border border-slate-200">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={nidPreview} alt="NID preview" className="w-full h-36 object-cover" />
+                          <button type="button" onClick={removeNid} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors">
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-amber-200 hover:border-amber-400 bg-amber-50/40 rounded-xl px-4 py-4 transition-colors">
+                          <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                            <Upload size={16} className="text-amber-600" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-slate-700">Upload NID card image</span>
+                            <span className="text-xs text-slate-400">JPG, PNG or WebP · Max 5 MB</span>
+                          </div>
+                          <input ref={nidInputRef} type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={handleNidChange} />
+                        </label>
+                      )}
+                    </div>
                   </div>
 
                   {/* Vehicle Info */}

@@ -18,6 +18,7 @@ export interface SiteSettings {
   messengerUrl: string;
   logoUrl: string | null;
   qrImageUrl: string | null;
+  visitingCardUrl: string | null;
   missionEn: string | null;
   missionBn: string | null;
   visionEn: string | null;
@@ -40,6 +41,7 @@ const defaultSettings: SiteSettings = {
   messengerUrl: SITE_CONFIG.messengerUrl,
   logoUrl: null,
   qrImageUrl: null,
+  visitingCardUrl: null,
   missionEn: null,
   missionBn: null,
   visionEn: null,
