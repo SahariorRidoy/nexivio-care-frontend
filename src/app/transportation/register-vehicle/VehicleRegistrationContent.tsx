@@ -253,12 +253,6 @@ export default function VehicleRegistrationContent() {
                     )}
                   </div>
 
-                  {/* Pricing */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Input label="Daily Rate (৳)" name="dailyRate" type="number" min={0} />
-                    <Input label="Per KM Rate (৳)" name="perKmRate" type="number" min={0} />
-                  </div>
-
                   <Textarea label="Description / Additional Info" name="description" rows={3} />
 
                   <Button type="submit" size="lg" fullWidth isLoading={submitting}>

@@ -46,6 +46,26 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
   });
   const allFeatures = Array.from(new Set(packages.flatMap((p) => p.includedFeatures)));
 
+  // Logo-brand colors for cards (independent of section bg)
+  // basic=light tint, standard=medium navy, premium=full navy
+  const LOGO_NAVY = "#0C2468";
+  const LOGO_GREEN = "#2e7d32";
+  const tierBg: Record<string, string> = {
+    basic:    `color-mix(in srgb, ${LOGO_GREEN} 12%, white)`,
+    standard: LOGO_GREEN,
+    premium:  LOGO_NAVY,
+  };
+  const tierAccent: Record<string, string> = {
+    basic:    LOGO_NAVY,
+    standard: LOGO_GREEN,
+    premium:  LOGO_GREEN,
+  };
+  const tierText: Record<string, string> = {
+    basic:    LOGO_NAVY,
+    standard: "#fff",
+    premium:  "#fff",
+  };
+
   if (packages.length === 0) return null;
 
   return (
@@ -61,44 +81,58 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
               const pkg = packages.find((p) => p.tier === tier);
               if (!pkg) return null;
               const name = language === "en" ? pkg.nameEn : pkg.nameBn;
+              const bg = tierBg[tier];
+              const txt = tierText[tier];
+              const accent = tierAccent[tier];
+              const isDark = tier !== "basic";
               return (
                 <div
                   key={tier}
-                  className="rounded-2xl bg-white flex flex-col overflow-hidden select-none"
-                  style={{ border: `2.5px solid ${color}` }}
+                  className="rounded-2xl flex flex-col overflow-hidden select-none"
+                  style={{ background: bg }}
                 >
                   {/* Top: big package name */}
                   <div className="px-6 pt-6 pb-3 flex flex-col items-center gap-3">
-                    <p className="text-4xl font-black tracking-tight text-center leading-none" style={{ color }}>
+                    <p className="text-4xl font-black tracking-tight text-center leading-none" style={{ color: txt }}>
                       {name}
                     </p>
                     {(language === "bn" ? pkg.descriptionBn : pkg.descriptionEn) && (
-                      <p className="text-xs text-center text-slate-500 leading-relaxed px-1">
+                      <p className={`text-xs text-center leading-relaxed px-1 ${isDark ? "text-white/70" : "text-green-900/70"}`}>
                         {language === "bn" ? pkg.descriptionBn : pkg.descriptionEn}
                       </p>
                     )}
                     <span
-                      className="text-xs font-bold uppercase tracking-widest text-white px-4 py-1 rounded-full"
-                      style={{ backgroundColor: color }}
+                      className="text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full"
+                      style={{ backgroundColor: isDark ? "rgba(255,255,255,0.2)" : accent, color: "#fff" }}
                     >
                       {name}
                     </span>
                     <div className="flex flex-wrap justify-center gap-2 mt-1">
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full border" style={{ borderColor: color, color }}>
-                        {pkg.dutyHours} {language === "en" ? "Hours" : "ঘণ্টা"}
+                      <span
+                        className="text-xs font-semibold px-3 py-1 rounded-full border"
+                        style={{ borderColor: isDark ? "rgba(255,255,255,0.4)" : accent, color: txt }}
+                      >
+                        {language === "bn" ? pkg.dutyHours.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[+d]) : pkg.dutyHours} {language === "en" ? "Hours" : "ঘণ্টা"}
                       </span>
                     </div>
                   </div>
 
                   {/* Features box */}
-                  <div className="mx-4 mb-4 rounded-xl bg-slate-100 p-4 flex-1">
+                  <div
+                    className="mx-4 mb-4 rounded-xl p-4 flex-1"
+                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)" }}
+                  >
                     <ul className="flex flex-col gap-2">
                       {allFeatures.map((f, i) => {
                         const included = pkg.includedFeatures.includes(f);
                         return (
-                          <li key={i} className={`flex items-start gap-2 text-sm ${included ? "text-slate-800 font-semibold" : "text-slate-400"}`}>
+                          <li key={i} className={`flex items-start gap-2 text-sm ${
+                            included
+                              ? isDark ? "text-white font-semibold" : "text-green-950 font-semibold"
+                              : isDark ? "text-white/30" : "text-green-900/30"
+                          }`}>
                             {included
-                              ? <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: "#22c55e" }} />
+                              ? <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: isDark ? "#86efac" : "#22c55e" }} />
                               : <span className="shrink-0 mt-0.5 w-4 h-4" />
                             }
                             {featureLabelMap.get(f) ?? f}
@@ -109,11 +143,14 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                   </div>
 
                   {/* Price box */}
-                  <div className="mx-4 mb-4 rounded-xl border bg-white p-4 text-center" style={{ borderColor: "#e2e8f0" }}>
-                    <p className="text-xs text-slate-500 mb-1">{language === "en" ? "Starts from" : "শুরু হয়"}</p>
-                    <p className="text-3xl font-black" style={{ color }}>
+                  <div
+                    className="mx-4 mb-4 rounded-xl p-4 text-center"
+                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)" }}
+                  >
+                    <p className={`text-xs mb-1 ${isDark ? "text-white/60" : "text-green-800"}`}>{language === "en" ? "Starts from" : "শুরু হয়"}</p>
+                    <p className="text-3xl font-black" style={{ color: txt }}>
                       ৳ {pkg.monthlyPrice.toLocaleString()}
-                      <span className="text-sm font-semibold text-slate-500">/{language === "en" ? "Month*" : "মাস*"}</span>
+                      <span className={`text-sm font-semibold ${isDark ? "text-white/60" : "text-green-800"}`}>/{language === "en" ? "Month*" : "মাস*"}</span>
                     </p>
                   </div>
 
@@ -121,8 +158,8 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                   <div className="px-4 pb-5">
                     <Link
                       href={`/book-service?service=${slug}`}
-                      className="block text-center py-2.5 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
-                      style={{ backgroundColor: color }}
+                      className="block text-center py-2.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: isDark ? "rgba(255,255,255,0.2)" : accent, color: "#fff" }}
                     >
                       {language === "en" ? "Get Now" : "এখনই নিন"}
                     </Link>
@@ -172,6 +209,12 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
             {language === "en"
               ? "Timely payment and prior notice are required for service continuation, cancellation, or rescheduling."
               : "সেবা চালিয়ে যাওয়া, বাতিল বা পুনর্নির্ধারণের জন্য সময়মতো পেমেন্ট এবং আগাম নোটিশ প্রয়োজন।"}
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            {language === "en"
+              ? "Package prices may vary based on the type, duration, and specific requirements of the service requested by the client."
+              : "ক্লায়েন্টের চাহিদা অনুযায়ী সেবার ধরন, সময়কাল এবং নির্দিষ্ট প্রয়োজনীয়তার ভিত্তিতে প্যাকেজের মূল্য পরিবর্তিত হতে পারে ।"}
           </li>
         </ul>
       </div>

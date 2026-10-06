@@ -176,7 +176,7 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                 <h2 className="text-xl font-bold mb-3" style={{ color: PRIMARY }}>
                   {language === "en" ? "About This Service" : "এই সেবা সম্পর্কে"}
                 </h2>
-                <p className="text-slate-600 leading-relaxed whitespace-pre-line">{description}</p>
+                <p className="text-slate-600 leading-relaxed whitespace-pre-line text-justify">{description}</p>
 
                 {isStatic && (
                   <div className="mt-6 flex flex-wrap gap-3">

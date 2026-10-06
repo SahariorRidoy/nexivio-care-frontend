@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import type { Service, OtherService } from "@/types";
 import Link from "next/link";
@@ -20,11 +20,18 @@ export default function Header() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [otherServicesOpen, setOtherServicesOpen] = useState(false);
   const [trainingOpen, setTrainingOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [transportationOpen, setTransportationOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
   const [apiServices, setApiServices] = useState<Service[]>([]);
   const [apiOtherServices, setApiOtherServices] = useState<OtherService[]>([]);
   const [apiTrainings, setApiTrainings] = useState<{ slug: string; titleEn: string; titleBn: string }[]>([]);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   const s = useSettings();
   const { t, language } = useLanguage();
 
@@ -261,7 +268,7 @@ export default function Header() {
       {/* ── NAV BAR: dark forest green ── */}
       <div className="bg-nav hidden lg:block">
         <div className="container mx-auto max-w-7xl px-4">
-          <nav className="flex items-center h-12">
+          <nav ref={navRef} className="flex items-center h-12">
             {navLinks.map((link) => {
               const isActive = link.href === "/"
                 ? pathname === "/"
@@ -274,7 +281,10 @@ export default function Header() {
               );
               if ("megaAbout" in link && link.megaAbout) {
                 return (
-                  <div key={link.href} className="relative group h-full flex items-center">
+                  <div key={link.href} className="relative h-full flex items-center"
+                    onMouseEnter={() => setOpenDropdown(link.href)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
                     <Link
                       href={link.href}
                       className={cn(
@@ -285,7 +295,7 @@ export default function Header() {
                       {displayLabel} <ChevronDown size={13} />
                     </Link>
                     {/* Mega dropdown */}
-                    <div className="absolute top-full left-0 z-50 hidden group-hover:flex bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[480px]">
+                    <div className={cn("absolute top-full left-0 z-50 bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[480px]", openDropdown === link.href ? "flex" : "hidden")}>
                       {/* Left — About sections */}
                       <div className="w-1/2 p-5 border-r border-slate-100">
                         <p className="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">
@@ -303,6 +313,7 @@ export default function Header() {
                             <Link
                               key={item.href}
                               href={item.href}
+                              onClick={() => setOpenDropdown(null)}
                               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
                             >
                               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
@@ -325,6 +336,7 @@ export default function Header() {
                             <Link
                               key={item.href}
                               href={item.href}
+                              onClick={() => setOpenDropdown(null)}
                               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
                             >
                               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
@@ -338,6 +350,7 @@ export default function Header() {
                         <div className="space-y-1">
                           <Link
                             href="/notice-board"
+                            onClick={() => setOpenDropdown(null)}
                             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-800 transition-colors"
                           >
                             <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
@@ -351,7 +364,10 @@ export default function Header() {
               }
               if (link.children) {
                 return (
-                  <div key={link.href} className="relative group h-full flex items-center">
+                  <div key={link.href} className="relative h-full flex items-center"
+                    onMouseEnter={() => setOpenDropdown(link.href)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
                     <Link
                       href={link.href}
                       className={cn(
@@ -361,11 +377,12 @@ export default function Header() {
                     >
                       {displayLabel} <ChevronDown size={13} />
                     </Link>
-                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-xl min-w-[220px] border-t-2 border-primary-600 rounded-b-lg py-1">
+                    <div className={cn("absolute top-full left-0 z-50 bg-white shadow-xl min-w-[220px] border-t-2 border-primary-600 rounded-b-lg py-1", openDropdown === link.href ? "block" : "hidden")}>
                       {link.children.map(child => (
                         <Link
                           key={child.href}
                           href={child.href}
+                          onClick={() => setOpenDropdown(null)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors group/item"
                         >
                           <span className="w-4 h-[2px] bg-primary-400 shrink-0 rounded-full group-hover/item:bg-white" />
@@ -379,7 +396,10 @@ export default function Header() {
               if ("megaTransport" in link && link.megaTransport) {
                 const isActive = pathname.startsWith("/transportation");
                 return (
-                  <div key={link.href} className="relative group h-full flex items-center">
+                  <div key={link.href} className="relative h-full flex items-center"
+                    onMouseEnter={() => setOpenDropdown(link.href)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
                     <Link
                       href={link.href}
                       className={cn(
@@ -390,17 +410,19 @@ export default function Header() {
                       {displayLabel} <ChevronDown size={13} />
                     </Link>
                     {/* Transport mega dropdown: 7 categories */}
-                    <div className="absolute top-full left-0 z-50 hidden group-hover:block bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[260px]">
+                    <div className={cn("absolute top-full left-0 z-50 bg-white shadow-2xl border-t-2 border-primary-600 rounded-b-lg w-[260px]", openDropdown === link.href ? "block" : "hidden")}>
                       {/* ── Highlighted action buttons ── */}
                       <div className="px-3 pt-3 pb-2 flex flex-col gap-2">
                         <Link
                           href="/transportation/book"
+                          onClick={() => setOpenDropdown(null)}
                           className="flex items-center justify-center gap-2 w-full py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
                         >
                           🚐 {isBn ? "এখনই বুক করুন" : "Book Now"}
                         </Link>
                         <Link
                           href="/transportation/register-vehicle"
+                          onClick={() => setOpenDropdown(null)}
                           className="flex items-center justify-center gap-2 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
                         >
                           🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
@@ -414,6 +436,7 @@ export default function Header() {
                           <div key={cat.slug} className="group/cat relative">
                             <Link
                               href={cat.href}
+                              onClick={() => setOpenDropdown(null)}
                               className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors"
                             >
                               <span>{isBn ? cat.labelBn : cat.labelEn}</span>
@@ -428,6 +451,7 @@ export default function Header() {
                                   <Link
                                     key={v.href}
                                     href={v.href}
+                                    onClick={() => setOpenDropdown(null)}
                                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-600 hover:text-white transition-colors"
                                   >
                                     <span className="w-3 h-[2px] bg-primary-300 shrink-0 rounded-full" />
@@ -435,7 +459,7 @@ export default function Header() {
                                   </Link>
                                 ))}
                                 <div className="border-t border-slate-100 mt-1 pt-1 px-4">
-                                  <Link href={`/transportation/book?cat=${cat.slug}`} className="text-xs font-semibold text-primary-600 hover:text-primary-800">
+                                  <Link href={`/transportation/book?cat=${cat.slug}`} onClick={() => setOpenDropdown(null)} className="text-xs font-semibold text-primary-600 hover:text-primary-800">
                                     {isBn ? "বুক করুন →" : "Book Now →"}
                                   </Link>
                                 </div>

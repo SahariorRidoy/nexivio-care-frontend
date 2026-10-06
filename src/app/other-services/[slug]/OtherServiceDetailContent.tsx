@@ -343,7 +343,27 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
                 <h2 className="text-xl font-bold mb-3" style={{ color: PRIMARY }}>
                   {language === "en" ? "About This Service" : "এই সেবা সম্পর্কে"}
                 </h2>
-                <p className="text-slate-600 leading-relaxed whitespace-pre-line">{description}</p>
+                <p className="text-slate-600 leading-relaxed text-justify text-sm">{description.split('\n\n')[0]}</p>
+                {description.split('\n\n').slice(1).map((block, i) => {
+                  const lines = block.split('\n');
+                  const firstLine = lines[0];
+                  const rest = lines.slice(1).join('\n');
+                  const isHeading = firstLine.endsWith(':');
+                  return (
+                    <div key={i} className="mt-4">
+                      {isHeading && (
+                        <h3 className="text-base font-bold mb-2 pb-1 border-b-2" style={{ color: PRIMARY, borderColor: PRIMARY }}>
+                          {firstLine}
+                        </h3>
+                      )}
+                      <div className="text-slate-600 leading-relaxed">
+                        {(isHeading ? rest : block).split('\n').map((line, j) => (
+                          <p key={j} className={`text-justify my-0 leading-relaxed ${line.startsWith('•') ? 'font-semibold text-sm' : 'text-sm'}`}>{line}</p>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
 
                 {isStatic && (
                   <div className="mt-6 flex flex-wrap gap-3">
