@@ -47,19 +47,31 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
   const allFeatures = Array.from(new Set(packages.flatMap((p) => p.includedFeatures)));
 
   // Logo-brand colors for cards (independent of section bg)
-  // basic=light tint, standard=medium navy, premium=full navy
   const LOGO_NAVY = "#0C2468";
   const LOGO_GREEN = "#2e7d32";
+
+  // If the section bg is green-ish, use navy for the standard (middle) card
+  // to avoid green-on-green clash
+  const isGreenBg = /^#([0-9a-f]{6})$/i.test(color) && (() => {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return g > r && g > b && g > 100;
+  })();
+  const standardBg = isGreenBg ? "#1e40af" : LOGO_GREEN;
+  const standardAccent = LOGO_GREEN;
+
   const tierBg: Record<string, string> = {
     basic:    `color-mix(in srgb, ${LOGO_GREEN} 12%, white)`,
-    standard: LOGO_GREEN,
+    standard: standardBg,
     premium:  LOGO_NAVY,
   };
   const tierAccent: Record<string, string> = {
     basic:    LOGO_NAVY,
-    standard: LOGO_GREEN,
+    standard: standardAccent,
     premium:  LOGO_GREEN,
   };
+
   const tierText: Record<string, string> = {
     basic:    LOGO_NAVY,
     standard: "#fff",
@@ -158,8 +170,8 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                   <div className="px-4 pb-5">
                     <Link
                       href={`/book-service?service=${slug}`}
-                      className="block text-center py-2.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                      style={{ backgroundColor: isDark ? "rgba(255,255,255,0.2)" : accent, color: "#fff" }}
+                      className="block text-center py-2.5 rounded text-sm font-bold text-white transition-colors hover:opacity-90"
+                      style={{ backgroundColor: bg === LOGO_GREEN ? LOGO_NAVY : "#43a047" }}
                     >
                       {language === "en" ? "Get Now" : "এখনই নিন"}
                     </Link>

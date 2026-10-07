@@ -296,7 +296,6 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (STATIC_SLUGS.has(slug)) { setLoading(false); return; }
     api.get<{ data: OtherService }>(`/other-services/${slug}`)
       .then((r) => setService(r.data))
       .catch(() => {})
@@ -305,7 +304,8 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
 
   if (loading) return <div className="flex justify-center py-32"><Spinner /></div>;
 
-  const isStatic = STATIC_SLUGS.has(slug);
+  // If DB has data for this slug, prefer it over static hardcoded data
+  const isStatic = STATIC_SLUGS.has(slug) && !service;
   const staticData = STATIC_OTHER_SERVICE_DATA[slug];
 
   const color = slugColor(slug);
@@ -322,6 +322,8 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
     : (language === "en" ? service?.descriptionEn : service?.descriptionBn) ?? "";
   const image = isStatic ? staticData.image : service?.image ?? "";
   const packages = isStatic ? [] : (service?.packages ?? []);
+  const features = isStatic ? [] : (language === "en" ? service?.featuresEn ?? [] : service?.featuresBn ?? []);
+  const hasPackages = packages.length > 0;
 
   const isMedicalEquipment = slug === "medical-equipment";
 
@@ -394,14 +396,37 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
                     </a>
                   </div>
                 )}
+
+                {!isStatic && !hasPackages && features.length > 0 && (
+                  <ul className="mt-5 flex flex-col gap-2">
+                    {features.map((f, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                        <span className="mt-1 h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: PRIMARY }} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {!isStatic && !hasPackages && (
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href={`/book-service?service=${slug}`} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#16a34a" }}>
+                      {language === "en" ? "Get Now" : "এখনই নিন"}
+                    </Link>
+                    <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: PRIMARY }}>
+                      <Phone size={16} />{language === "en" ? "Contact Us" : "যোগাযোগ করুন"}
+                    </Link>
+                    <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#25D366" }}>
+                      <MessageCircle size={16} />{language === "en" ? "WhatsApp Us" : "হোয়াটসঅ্যাপ"}
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Medical Equipment picture grid */}
           {isMedicalEquipment && <MedicalEquipmentShowcase language={language} />}
 
-          {!isStatic && <ServicePackageCards slug={slug} packages={packages} />}
+          {!isStatic && hasPackages && <ServicePackageCards slug={slug} packages={packages} />}
 
         </div>
       </section>

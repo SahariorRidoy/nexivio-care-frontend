@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nexiviocare.com";
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 async function fetchSlugs(endpoint: string): Promise<string[]> {
+  if (!API_URL || API_URL.includes("localhost")) return [];
   try {
     const res = await fetch(`${API_URL}${endpoint}`, { next: { revalidate: 3600 } });
     const json = await res.json();

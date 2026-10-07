@@ -141,7 +141,8 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
 
   if (loading) return <div className="flex justify-center py-32"><Spinner /></div>;
 
-  const isStatic = STATIC_SLUGS.has(slug);
+  // If DB has data for this slug, use it (even for previously-static slugs)
+  const isStatic = STATIC_SLUGS.has(slug) && !service;
   const staticData = STATIC_SERVICE_DATA[slug];
 
   const color = slugColor(slug);
@@ -158,6 +159,8 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
     : (language === "en" ? service?.descriptionEn : service?.descriptionBn) ?? "";
   const image = isStatic ? staticData.image : service?.image ?? "";
   const packages = isStatic ? [] : (service?.packages ?? []);
+  const features = isStatic ? [] : (language === "en" ? service?.featuresEn ?? [] : service?.featuresBn ?? []);
+  const hasPackages = packages.length > 0;
 
   return (
     <>
@@ -207,11 +210,40 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                     </a>
                   </div>
                 )}
+
+                {!isStatic && !hasPackages && features.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-base font-bold mb-2 pb-1 border-b-2" style={{ color: PRIMARY, borderColor: PRIMARY }}>
+                      {language === "en" ? "Our services include:" : "আমাদের সেবাসমূহ:"}
+                    </h3>
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {features.map((f, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-700 font-semibold">
+                          <span className="mt-1.5 shrink-0">•</span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {!isStatic && !hasPackages && (
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href={`/book-service?service=${slug}`} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#16a34a" }}>
+                      {language === "en" ? "Get Now" : "এখনই নিন"}
+                    </Link>
+                    <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: PRIMARY }}>
+                      <Phone size={16} />{language === "en" ? "Contact Us" : "যোগাযোগ করুন"}
+                    </Link>
+                    <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#25D366" }}>
+                      <MessageCircle size={16} />{language === "en" ? "WhatsApp Us" : "হোয়াটসঅ্যাপ"}
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {!isStatic && <ServicePackageCards slug={slug} packages={packages} featuresEn={service?.featuresEn ?? []} featuresBn={service?.featuresBn ?? []} />}
+          {!isStatic && hasPackages && <ServicePackageCards slug={slug} packages={packages} featuresEn={service?.featuresEn ?? []} featuresBn={service?.featuresBn ?? []} />}
 
         </div>
       </section>
