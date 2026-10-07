@@ -89,18 +89,6 @@ export default function Header() {
       ],
     },
     {
-      slug: "intercity-transport",
-      labelEn: "🛣️ Intercity Transport",
-      labelBn: "🛣️ আন্তঃনগর পরিবহন",
-      href: "/transportation?cat=intercity",
-      vehicles: [
-        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
-        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
-        { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
-        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
-      ],
-    },
-    {
       slug: "corporate-transport",
       labelEn: "🏢 Corporate Transport",
       labelBn: "🏢 কর্পোরেট পরিবহন",
@@ -120,7 +108,6 @@ export default function Header() {
       vehicles: [
         { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
         { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
-        { labelEn: "🚖 Rent-a-Car",   labelBn: "🚖 রেন্ট-এ-কার",   href: "/transportation/book?type=rent-a-car" },
         { labelEn: "🚌 Microbus",     labelBn: "🚌 মাইক্রোবাস",    href: "/transportation/book?type=microbus" },
       ],
     },
@@ -142,18 +129,6 @@ export default function Header() {
         { labelEn: "🚚 Pickup",       labelBn: "🚚 পিকআপ",         href: "/transportation/book?type=pickup" },
         { labelEn: "🚛 Truck",        labelBn: "🚛 ট্রাক",          href: "/transportation/book?type=truck" },
         { labelEn: "📦 Covered Van",  labelBn: "📦 কভার্ড ভ্যান",   href: "/transportation/book?type=covered-van" },
-      ],
-    },
-    {
-      slug: "vehicle-rental",
-      labelEn: "🚖 Vehicle Rental",
-      labelBn: "🚖 গাড়ি ভাড়া",
-      href: "/transportation?cat=rental",
-      vehicles: [
-        { labelEn: "🚗 Private Car",  labelBn: "🚗 প্রাইভেট কার",  href: "/transportation/book?type=private-car" },
-        { labelEn: "🚖 Rent-a-Car",   labelBn: "🚖 রেন্ট-এ-কার",   href: "/transportation/book?type=rent-a-car" },
-        { labelEn: "🚙 SUV / Jeep",   labelBn: "🚙 এসইউভি / জিপ",  href: "/transportation/book?type=suv-jeep" },
-        { labelEn: "🚐 Noah & Hiace", labelBn: "🚐 নোয়া ও হায়েস", href: "/transportation/book?type=noah-hiace" },
       ],
     },
   ];
@@ -423,7 +398,7 @@ export default function Header() {
                         <Link
                           href="/transportation/register-vehicle"
                           onClick={() => setOpenDropdown(null)}
-                          className="flex items-center justify-center gap-2 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
+                          className="flex items-center justify-center gap-2 w-full py-2 bg-nav-DEFAULT hover:bg-[#13389f] text-white text-sm font-bold rounded-lg transition-colors shadow-sm"
                         >
                           🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
                         </Link>
@@ -604,7 +579,7 @@ export default function Header() {
                           <Link
                             href="/transportation/register-vehicle"
                             onClick={() => setMenuOpen(false)}
-                            className="block text-center py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-lg transition-colors"
+                            className="block text-center py-2 bg-nav-DEFAULT hover:bg-[#13389f] text-white text-sm font-bold rounded-lg transition-colors"
                           >
                             🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
                           </Link>

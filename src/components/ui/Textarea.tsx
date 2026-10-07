@@ -14,7 +14,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-slate-700">
+          <label htmlFor={inputId} className="text-base font-bold text-nav-DEFAULT">
             {label}
             {props.required && <span className="ml-1 text-red-500">*</span>}
           </label>

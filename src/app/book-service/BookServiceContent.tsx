@@ -30,6 +30,8 @@ const schema = z.object({
   relationship: z.string().min(1),
   patientCondition: z.string().optional(),
   serviceType: z.string().min(1),
+  dutyType: z.enum(["day", "night", "live-in"]),
+  serviceDays: z.number().int().min(1),
   packageName: z.string().optional(),
   date: z.string().min(1),
   time: z.string().min(1),
@@ -40,9 +42,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const PAYMENT_METHODS = [
+  { value: "cash",  label: "Cash on Service", color: "#15803d", bg: "#f0fdf4" },
   { value: "bkash", label: "bKash",          color: "#e2136e", bg: "#fdf2f8" },
   { value: "card",  label: "Card",            color: "#1d4ed8", bg: "#eff6ff" },
-  { value: "cash",  label: "Cash on Service", color: "#15803d", bg: "#f0fdf4" },
 ];
 
 const WHY_ITEMS = [
@@ -158,6 +160,7 @@ function BookServiceInner() {
   });
 
   const [selectedService, setSelectedService] = useState<string>(preselected);
+  const [dutyTypeError, setDutyTypeError] = useState<string>("");
   const currentPackages = (selectedService && packagesMap[selectedService]) || [];
 
   // Pre-select service from query param once services are loaded
@@ -176,6 +179,11 @@ function BookServiceInner() {
   }, [selectedService, setValue]);
 
   const onSubmit = async (data: FormData) => {
+    if (!data.dutyType) {
+      setDutyTypeError(isBn ? "অনুগ্রহ করে ডিউটির ধরন বেছে নিন" : "Please select a duty type");
+      return;
+    }
+    setDutyTypeError("");
     if (currentPackages.length > 0 && !selectedPackage) {
       setPackageError(isBn ? "অনুগ্রহ করে একটি প্যাকেজ বেছে নিন" : "Please select a package");
       return;
@@ -188,6 +196,7 @@ function BookServiceInner() {
 
     const booking = await api.post<{ data: { id: string } }>("/bookings", {
       ...data,
+      dutyType: data.dutyType,
       packageName: selectedPackage ? (isBn ? selectedPackage.nameBn : selectedPackage.nameEn) : undefined,
       pricingPeriod: selectedPackage ? pricingPeriod : undefined,
       amount,
@@ -300,97 +309,75 @@ function BookServiceInner() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Input label={f.name} required error={errors.name?.message} {...register("name")} />
-                    <Input label={f.phone} type="tel" required error={errors.phone?.message} {...register("phone")} />
-                  </div>
-
-                  <Input label={f.address} required error={errors.address?.message} {...register("address")} />
-
-                  {/* Patient Info */}
-                  <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 flex flex-col gap-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: PRIMARY }}>
-                      {isBn ? "রোগীর তথ্য" : "Patient Information"}
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <Input
-                        label={f.patientName}
-                        required
-                        error={errors.patientName?.message}
-                        {...register("patientName")}
-                      />
-                      <Select
-                        label={f.patientGender}
-                        required
-                        options={[
-                          { value: "male",   label: isBn ? "পুরুষ"  : "Male"   },
-                          { value: "female", label: isBn ? "মহিলা" : "Female" },
-                          { value: "other",  label: isBn ? "অন্যান্য" : "Other" },
-                        ]}
-                        placeholder={isBn ? "— লিঙ্গ —" : "— Gender —"}
-                        error={errors.patientGender?.message}
-                        {...register("patientGender")}
-                      />
-                      <Select
-                        label={f.relationship}
-                        required
-                        options={[
-                          { value: "self",    label: isBn ? "নিজে"      : "Self"        },
-                          { value: "son",     label: isBn ? "ছেলে"      : "Son"         },
-                          { value: "daughter",label: isBn ? "মেয়ে"      : "Daughter"    },
-                          { value: "spouse",  label: isBn ? "স্বামী/স্ত্রী" : "Spouse"  },
-                          { value: "parent",  label: isBn ? "বাবা/মা"   : "Parent"      },
-                          { value: "sibling", label: isBn ? "ভাই/বোন"  : "Sibling"     },
-                          { value: "other",   label: isBn ? "অন্যান্য" : "Other"        },
-                        ]}
-                        placeholder={isBn ? "— সম্পর্ক —" : "— Relationship —"}
-                        error={errors.relationship?.message}
-                        {...register("relationship")}
-                      />
+                  {/* 1. Service & Duty Type */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-base font-bold text-nav-DEFAULT">
+                        {f.serviceType} <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        defaultValue={preselected || ""}
+                        disabled={servicesLoading}
+                        className="h-10 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 transition-colors cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:bg-slate-50"
+                        {...register("serviceType")}
+                        onChange={(e) => {
+                          register("serviceType").onChange(e);
+                          setSelectedService(e.target.value);
+                        }}
+                      >
+                        <option value="" disabled>
+                          {servicesLoading ? (isBn ? "লোড হচ্ছে..." : "Loading...") : (isBn ? "— সেবা বেছে নিন —" : "— Select Service —")}
+                        </option>
+                        {serviceGroups.map((group) => (
+                          <optgroup key={group.label} label={group.label}>
+                            {group.options.map((opt) => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                      {errors.serviceType && <p className="text-xs text-red-500">{errors.serviceType.message}</p>}
                     </div>
-                    <Textarea
-                      label={f.patientCondition}
-                      rows={2}
-                      {...register("patientCondition")}
-                    />
+
+                    <div className="flex flex-col gap-1">
+                      <label className="text-base font-bold text-nav-DEFAULT">
+                        {isBn ? "ডিউটির ধরন" : "Duty Type"} <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        defaultValue=""
+                        className="h-10 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 transition-colors cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                        {...register("dutyType")}
+                        onChange={(e) => { register("dutyType").onChange(e); setDutyTypeError(""); }}
+                      >
+                        <option value="" disabled>{isBn ? "— ডিউটি বেছে নিন —" : "— Select Duty Type —"}</option>
+                        <option value="day">{isBn ? "দিনের ডিউটি (Day)" : "Day Duty - 8/12 hours"}</option>
+                        <option value="night">{isBn ? "রাতের ডিউটি (Night)" : "Night Duty - 8/12 hours"}</option>
+                        <option value="live-in">{isBn ? "লাইভ-ইন (Live In)" : "Live In - 24 hours"}</option>
+                      </select>
+                      {(errors.dutyType || dutyTypeError) && (
+                        <p className="text-xs text-red-500">{errors.dutyType?.message ?? dutyTypeError}</p>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-slate-700">
-                      {f.serviceType} <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      defaultValue={preselected || ""}
-                      disabled={servicesLoading}
-                      className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 transition-colors cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:bg-slate-50"
-                      {...register("serviceType")}
-                      onChange={(e) => {
-                        register("serviceType").onChange(e);
-                        setSelectedService(e.target.value);
-                      }}
-                    >
-                      <option value="" disabled>
-                        {servicesLoading ? (isBn ? "লোড হচ্ছে..." : "Loading...") : (isBn ? "— সেবা বেছে নিন —" : "— Select Service —")}
-                      </option>
-                      {serviceGroups.map((group) => (
-                        <optgroup key={group.label} label={group.label}>
-                          {group.options.map((opt) => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
-                    {errors.serviceType && <p className="text-xs text-red-500">{errors.serviceType.message}</p>}
-                  </div>
+                  {/* 1b. Service Days */}
+                  <Input
+                    label={isBn ? "সেবা কত দিন দরকার?" : "How many days do you need the service?"}
+                    type="number"
+                    required
+                    min={1}
+                    placeholder={isBn ? "যেমন: 7" : "e.g. 7"}
+                    error={errors.serviceDays?.message}
+                    {...register("serviceDays", { valueAsNumber: true })}
+                  />
 
-                  {/* Package selection */}
+                  {/* 2. Package selection */}
                   {currentPackages.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         <label className="text-sm font-medium text-slate-700">
                           {isBn ? "প্যাকেজ বেছে নিন" : "Select Package"} <span className="text-red-500">*</span>
                         </label>
-                        {/* Pricing period toggle */}
                         <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-semibold">
                           {(["daily", "weekly", "monthly"] as const).map((period) => (
                             <button
@@ -403,16 +390,11 @@ function BookServiceInner() {
                                 : { backgroundColor: "#fff", color: "#64748b" }
                               }
                             >
-                              {period === "daily"
-                                ? (isBn ? "দৈনিক" : "Daily")
-                                : period === "weekly"
-                                ? (isBn ? "সাপ্তাহিক" : "Weekly")
-                                : (isBn ? "মাসিক" : "Monthly")}
+                              {period === "daily" ? (isBn ? "দৈনিক" : "Daily") : period === "weekly" ? (isBn ? "সাপ্তাহিক" : "Weekly") : (isBn ? "মাসিক" : "Monthly")}
                             </button>
                           ))}
                         </div>
                       </div>
-
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {currentPackages.map((pkg) => {
                           const isSelected = selectedPackage?.tier === pkg.tier;
@@ -422,32 +404,15 @@ function BookServiceInner() {
                             <button
                               key={pkg.tier}
                               type="button"
-                              onClick={() => {
-                                setSelectedPackage(pkg);
-                                setPackageError("");
-                                setValue("packageName", isBn ? pkg.nameBn : pkg.nameEn);
-                              }}
+                              onClick={() => { setSelectedPackage(pkg); setPackageError(""); setValue("packageName", isBn ? pkg.nameBn : pkg.nameEn); }}
                               className="flex flex-col gap-1 p-4 rounded-xl border-2 text-left transition-all"
-                              style={isSelected
-                                ? { borderColor: PRIMARY, backgroundColor: "#dbeafe", boxShadow: `0 0 0 3px ${PRIMARY}22` }
-                                : { borderColor: "#e2e8f0", backgroundColor: "#fff" }
-                              }
+                              style={isSelected ? { borderColor: PRIMARY, backgroundColor: "#dbeafe", boxShadow: `0 0 0 3px ${PRIMARY}22` } : { borderColor: "#e2e8f0", backgroundColor: "#fff" }}
                             >
-                              <span className="text-xs font-bold uppercase tracking-wide" style={{ color: isSelected ? PRIMARY : "#64748b" }}>
-                                {isBn ? pkg.nameBn : pkg.nameEn}
-                              </span>
+                              <span className="text-xs font-bold uppercase tracking-wide" style={{ color: isSelected ? PRIMARY : "#64748b" }}>{isBn ? pkg.nameBn : pkg.nameEn}</span>
                               {(isBn ? pkg.descriptionBn : pkg.descriptionEn) && (
-                                <span className="text-xs text-slate-400 leading-tight">
-                                  {isBn ? pkg.descriptionBn : pkg.descriptionEn}
-                                </span>
+                                <span className="text-xs text-slate-400 leading-tight">{isBn ? pkg.descriptionBn : pkg.descriptionEn}</span>
                               )}
-                              <span
-                                className="mt-1 inline-flex items-baseline gap-0.5 rounded-lg px-2 py-1 text-lg font-extrabold"
-                                style={isSelected
-                                  ? { backgroundColor: PRIMARY, color: "#fff" }
-                                  : { backgroundColor: "#f1f5f9", color: PRIMARY }
-                                }
-                              >
+                              <span className="mt-1 inline-flex items-baseline gap-0.5 rounded-lg px-2 py-1 text-lg font-extrabold" style={isSelected ? { backgroundColor: PRIMARY, color: "#fff" } : { backgroundColor: "#f1f5f9", color: PRIMARY }}>
                                 ৳{price.toLocaleString()}
                                 <span className="text-[10px] font-normal" style={{ color: isSelected ? "#bfdbfe" : "#94a3b8" }}>/{periodLabel}</span>
                               </span>
@@ -456,31 +421,78 @@ function BookServiceInner() {
                           );
                         })}
                       </div>
-
                       {packageError && <p className="text-xs text-red-500">{packageError}</p>}
-
-                      {/* Selected package amount summary */}
                       {selectedPackage && (
                         <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 border-2" style={{ backgroundColor: PRIMARY, borderColor: PRIMARY }}>
-                          <span className="text-sm font-semibold text-white">
-                            {isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <span className="opacity-80">{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</span>
-                          </span>
-                          <span className="text-lg font-extrabold text-white">
-                            ৳{(pricingPeriod === "daily" ? selectedPackage.dailyPrice : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice : selectedPackage.monthlyPrice).toLocaleString()}
-                          </span>
+                          <span className="text-sm font-semibold text-white">{isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <span className="opacity-80">{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</span></span>
+                          <span className="text-lg font-extrabold text-white">৳{(pricingPeriod === "daily" ? selectedPackage.dailyPrice : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice : selectedPackage.monthlyPrice).toLocaleString()}</span>
                         </div>
                       )}
                     </div>
                   )}
 
+                  {/* 3. Date & Time */}
                   <div className="grid grid-cols-2 gap-4">
                     <Input label={f.date} type="date" required error={errors.date?.message} {...register("date")} />
                     <Input label={f.time} type="time" required error={errors.time?.message} {...register("time")} />
                   </div>
 
-                  {/* Payment method */}
+                  {/* 4. Patient Info */}
+                  <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 flex flex-col gap-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: PRIMARY }}>
+                      {isBn ? "রোগীর তথ্য" : "Patient Information"}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Input label={f.patientName} required error={errors.patientName?.message} {...register("patientName")} />
+                      <Select
+                        label={f.patientGender}
+                        required
+                        options={[
+                          { value: "male",   label: isBn ? "পুরুষ"     : "Male"   },
+                          { value: "female", label: isBn ? "মহিলা"    : "Female" },
+                          { value: "other",  label: isBn ? "অন্যান্য" : "Other"  },
+                        ]}
+                        placeholder={isBn ? "— লিঙ্গ —" : "— Gender —"}
+                        error={errors.patientGender?.message}
+                        {...register("patientGender")}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Textarea label={f.patientCondition} rows={2} {...register("patientCondition")} />
+                      <Select
+                        label={f.relationship}
+                        required
+                        options={[
+                          { value: "self",     label: isBn ? "নিজে"         : "Self"     },
+                          { value: "son",      label: isBn ? "ছেলে"         : "Son"      },
+                          { value: "daughter", label: isBn ? "মেয়ে"         : "Daughter" },
+                          { value: "spouse",   label: isBn ? "স্বামী/স্ত্রী" : "Spouse"   },
+                          { value: "parent",   label: isBn ? "বাবা/মা"      : "Parent"   },
+                          { value: "sibling",  label: isBn ? "ভাই/বোন"     : "Sibling"  },
+                          { value: "other",    label: isBn ? "অন্যান্য"    : "Other"    },
+                        ]}
+                        placeholder={isBn ? "— সম্পর্ক —" : "— Relationship —"}
+                        error={errors.relationship?.message}
+                        {...register("relationship")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 5. Contact Info */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <Input label={f.name} required error={errors.name?.message} {...register("name")} />
+                    <Input label={f.phone} type="tel" required error={errors.phone?.message} {...register("phone")} />
+                  </div>
+
+                  {/* 6. Address & Notes */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <Textarea label={f.address} rows={3} required error={errors.address?.message} {...register("address")} />
+                    <Textarea label={f.notes} rows={3} {...register("notes")} />
+                  </div>
+
+                  {/* 7. Payment */}
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-base font-bold text-nav-DEFAULT">
                       {f.paymentMethod} <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -506,8 +518,6 @@ function BookServiceInner() {
                     {errors.paymentMethod && <p className="text-xs text-red-500">{errors.paymentMethod.message}</p>}
                     <input type="hidden" {...register("paymentMethod")} />
                   </div>
-
-                  <Textarea label={f.notes} rows={3} {...register("notes")} />
 
                   <Button type="submit" size="lg" fullWidth isLoading={isSubmitting}>
                     {selectedPayment === "bkash"

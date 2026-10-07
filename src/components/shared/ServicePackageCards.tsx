@@ -126,6 +126,14 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                       >
                         {language === "bn" ? pkg.dutyHours.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[+d]) : pkg.dutyHours} {language === "en" ? "Hours" : "ঘণ্টা"}
                       </span>
+                      <span
+                        className="text-xs font-bold px-3 py-1 rounded-full"
+                        style={{ backgroundColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.07)", color: txt }}
+                      >
+                        {pkg.dutyHours === 24
+                          ? (language === "bn" ? "লাইভ-ইন" : "Live In")
+                          : (language === "bn" ? "ডে / নাইট" : "Day / Night")}
+                      </span>
                     </div>
                   </div>
 
@@ -141,11 +149,11 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                           <li key={i} className={`flex items-start gap-2 text-sm ${
                             included
                               ? isDark ? "text-white font-semibold" : "text-green-950 font-semibold"
-                              : isDark ? "text-white/30" : "text-green-900/30"
+                              : isDark ? "text-white/30" : "text-green-900/50"
                           }`}>
                             {included
                               ? <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: isDark ? "#86efac" : "#22c55e" }} />
-                              : <span className="shrink-0 mt-0.5 w-4 h-4" />
+                              : <span className="shrink-0 mt-0.5 text-red-400">✕</span>
                             }
                             {featureLabelMap.get(f) ?? f}
                           </li>

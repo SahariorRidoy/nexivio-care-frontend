@@ -18,12 +18,10 @@ import Button from "@/components/ui/Button";
 // ─── Category → vehicles mapping (mirrors Header.tsx) ────────────────────────
 const CATEGORY_MAP: Record<string, { label: string; vehicles: string[] }> = {
   "local-transport":      { label: "🏙️ Local Transport",       vehicles: ["private-car", "noah-hiace", "microbus", "suv-jeep"] },
-  "intercity-transport":  { label: "🛣️ Intercity Transport",   vehicles: ["private-car", "noah-hiace", "microbus", "suv-jeep"] },
   "corporate-transport":  { label: "🏢 Corporate Transport",   vehicles: ["private-car", "suv-jeep", "microbus", "noah-hiace"] },
   "airport-transfer":     { label: "✈️ Airport Transfer",      vehicles: ["private-car", "suv-jeep", "rent-a-car", "microbus"] },
   "ambulance-service":    { label: "🚑 Ambulance Service",     vehicles: ["ambulance"] },
   "goods-transportation": { label: "📦 Goods Transportation",  vehicles: ["pickup", "truck", "covered-van"] },
-  "vehicle-rental":       { label: "🚖 Vehicle Rental",        vehicles: ["private-car", "rent-a-car", "suv-jeep", "noah-hiace"] },
 };
 
 const ALL_VEHICLES = [
@@ -32,12 +30,10 @@ const ALL_VEHICLES = [
   { value: "noah-hiace",      label: "🚐 Noah & Hiace" },
   { value: "microbus",        label: "🚌 Microbus" },
   { value: "suv-jeep",        label: "🚙 SUV / Jeep" },
-  { value: "rent-a-car",      label: "🚖 Rent-a-Car" },
   { value: "pickup",          label: "🚚 Pickup" },
   { value: "truck",           label: "🚛 Truck" },
   { value: "covered-van",     label: "📦 Covered Van" },
   { value: "goods-transport", label: "📦 Goods Transportation" },
-  { value: "intercity",       label: "🛣️ Intercity Transport" },
 ];
 
 const schema = z.object({
@@ -53,9 +49,8 @@ const schema = z.object({
   scheduledTime: z.string().min(1, "Time required"),
   passengerCount: z.coerce.number().int().positive().default(1),
   luggageCount: z.coerce.number().int().min(0).default(0),
-  specialRequirements: z.string().optional(),
-  paymentMethod: z.enum(["bkash", "cash", "card"]),
   notes: z.string().optional(),
+  paymentMethod: z.enum(["bkash", "cash", "card"]),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -64,15 +59,16 @@ export default function TransportBookingContent() {
   const s = useSettings();
   const searchParams = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState("cash");
+  const [selectedPayment, setSelectedPayment] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { tripType: "one-way", passengerCount: 1, luggageCount: 0, paymentMethod: "cash" },
+    defaultValues: { tripType: "" as "one-way" | "round-trip", passengerCount: 1, luggageCount: 0, paymentMethod: "" as "cash" | "bkash" | "card" },
   });
 
   const selectedVehicle = watch("vehicleType");
+  const watchedValues = watch();
 
   // Derive filtered vehicle list based on active category
   const vehicleOptions = activeCategory && CATEGORY_MAP[activeCategory]
@@ -89,10 +85,8 @@ export default function TransportBookingContent() {
       setValue("serviceCategory", cat);
       // Auto-select first vehicle of this category if no type param
       if (!type) {
-        const firstVehicle = CATEGORY_MAP[cat].vehicles[0];
-        if (firstVehicle) setValue("vehicleType", firstVehicle, { shouldValidate: true });
-      }
-    }
+        setValue("vehicleType", "", { shouldValidate: false });
+      }    }
 
     if (type) {
       setValue("vehicleType", type, { shouldValidate: true });
@@ -106,7 +100,7 @@ export default function TransportBookingContent() {
       }
     }
 
-    setValue("paymentMethod", "cash");
+    setValue("paymentMethod", "" as "cash");
   }, [searchParams, setValue]);
 
   const onSubmit = async (data: FormData) => {
@@ -133,6 +127,11 @@ export default function TransportBookingContent() {
       </div>
     );
   }
+
+  const f = (val: unknown) =>
+    val && String(val).trim() !== ""
+      ? "bg-green-50 border-green-400 focus:border-green-500"
+      : "bg-slate-50 border-slate-300 focus:border-slate-400";
 
   const catInfo = activeCategory ? CATEGORY_MAP[activeCategory] : null;
 
@@ -180,9 +179,7 @@ export default function TransportBookingContent() {
                       onClick={() => {
                         setActiveCategory(slug);
                         setValue("serviceCategory", slug);
-                        // Auto-select first vehicle of this category
-                        const first = cat.vehicles[0];
-                        if (first) setValue("vehicleType", first, { shouldValidate: true });
+                        setValue("vehicleType", "", { shouldValidate: false });
                       }}
                       className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
                         activeCategory === slug
@@ -226,28 +223,36 @@ export default function TransportBookingContent() {
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
                   <input type="hidden" {...register("serviceCategory")} />
 
+                  {/* Vehicle type + Trip type */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Input label="Full Name" required error={errors.passengerName?.message} {...register("passengerName")} />
-                    <Input label="Phone Number" type="tel" required error={errors.passengerPhone?.message} {...register("passengerPhone")} />
-                  </div>
-
-                  <Input label="Email (optional)" type="email" error={errors.passengerEmail?.message} {...register("passengerEmail")} />
-
-                  {/* Vehicle type — filtered by category */}
-                  <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1.5">
+                      <Select
+                        label="Vehicle Type"
+                        required
+                        options={vehicleOptions}
+                        placeholder="— Select Vehicle —"
+                        error={errors.vehicleType?.message}
+                        className={f(watchedValues.vehicleType)}
+                        {...register("vehicleType")}
+                      />
+                      {catInfo && vehicleOptions.length < ALL_VEHICLES.length && (
+                        <p className="text-xs text-primary-600">
+                          Showing {vehicleOptions.length} vehicle{vehicleOptions.length > 1 ? "s" : ""} for <strong>{catInfo.label}</strong>
+                        </p>
+                      )}
+                    </div>
                     <Select
-                      label="Vehicle Type"
+                      label="Trip Type"
                       required
-                      options={vehicleOptions}
-                      placeholder="— Select Vehicle —"
-                      error={errors.vehicleType?.message}
-                      {...register("vehicleType")}
+                      options={[
+                        { value: "one-way", label: "One Way" },
+                        { value: "round-trip", label: "Round Trip" },
+                      ]}
+                      placeholder="— Select Trip Type —"
+                      error={errors.tripType?.message}
+                      className={f(watchedValues.tripType)}
+                      {...register("tripType")}
                     />
-                    {catInfo && vehicleOptions.length < ALL_VEHICLES.length && (
-                      <p className="text-xs text-primary-600">
-                        Showing {vehicleOptions.length} vehicle{vehicleOptions.length > 1 ? "s" : ""} for <strong>{catInfo.label}</strong>
-                      </p>
-                    )}
                   </div>
 
                   {/* Vehicle type quick-select pills */}
@@ -271,63 +276,45 @@ export default function TransportBookingContent() {
                   )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Input label="Pickup Address" required error={errors.pickupAddress?.message} {...register("pickupAddress")} />
-                    <Input label="Drop Address" required error={errors.dropAddress?.message} {...register("dropAddress")} />
+                    <Input label="Pickup Address" required error={errors.pickupAddress?.message} className={f(watchedValues.pickupAddress)} {...register("pickupAddress")} />
+                    <Input label="Drop Address" required error={errors.dropAddress?.message} className={f(watchedValues.dropAddress)} {...register("dropAddress")} />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <Select
-                      label="Trip Type"
-                      required
-                      options={[
-                        { value: "one-way", label: "One Way" },
-                        { value: "round-trip", label: "Round Trip" },
-                      ]}
-                      error={errors.tripType?.message}
-                      {...register("tripType")}
-                    />
-                    <Input label="Date" type="date" required error={errors.scheduledDate?.message} {...register("scheduledDate")} />
-                    <Input label="Time" type="time" required error={errors.scheduledTime?.message} {...register("scheduledTime")} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input label="Date" type="date" required error={errors.scheduledDate?.message} className={f(watchedValues.scheduledDate)} {...register("scheduledDate")} />
+                    <Input label="Time" type="time" required error={errors.scheduledTime?.message} className={f(watchedValues.scheduledTime)} {...register("scheduledTime")} />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-5">
-                    <Input label="Passengers" type="number" min={1} error={errors.passengerCount?.message} {...register("passengerCount")} />
-                    <Input label="Luggage Bags" type="number" min={0} error={errors.luggageCount?.message} {...register("luggageCount")} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <Input label="Full Name" required error={errors.passengerName?.message} className={f(watchedValues.passengerName)} {...register("passengerName")} />
+                    <Input label="Phone Number" type="tel" required error={errors.passengerPhone?.message} className={f(watchedValues.passengerPhone)} {...register("passengerPhone")} />
                   </div>
 
-                  <Textarea label="Special Requirements (optional)" rows={2} {...register("specialRequirements")} />
 
-                  {/* Payment */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-slate-700">Payment Method <span className="text-red-500">*</span></label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { value: "cash",  label: "💵 Cash",  color: "#15803d" },
-                        { value: "bkash", label: "📱 bKash", color: "#e2136e" },
-                        { value: "card",  label: "💳 Card",  color: "#1d4ed8" },
-                      ].map(({ value, label, color }) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => {
-                            setSelectedPayment(value);
-                            setValue("paymentMethod", value as FormData["paymentMethod"], { shouldValidate: true });
-                          }}
-                          className="py-3 rounded-xl border-2 text-xs font-semibold transition-all"
-                          style={selectedPayment === value
-                            ? { borderColor: color, backgroundColor: `${color}15`, color }
-                            : { borderColor: "#e2e8f0", backgroundColor: "#fff", color: "#64748b" }
-                          }
-                        >
-                          {label}
-                        </button>
-                      ))}
+                  <div className="grid grid-cols-3 gap-5">
+                    <Input label="Passengers" type="number" min={1} error={errors.passengerCount?.message} className={f(watchedValues.passengerCount)} {...register("passengerCount")} />
+                    <Input label="Luggage Bags" type="number" min={0} error={errors.luggageCount?.message} className={f(watchedValues.luggageCount)} {...register("luggageCount")} />
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-nav-DEFAULT">Payment Method <span className="text-red-500">*</span></label>
+                      <select
+                        value={selectedPayment}
+                        onChange={(e) => {
+                          setSelectedPayment(e.target.value);
+                          setValue("paymentMethod", e.target.value as FormData["paymentMethod"], { shouldValidate: true });
+                        }}
+                        className={`h-10 w-full rounded-lg border-2 px-3 text-sm font-semibold focus:outline-none focus:ring-2 cursor-pointer transition-colors ${f(selectedPayment)}`}
+                      >
+                        <option value="" disabled>— Select Payment —</option>
+                        <option value="cash">💵 Cash</option>
+                        <option value="bkash">📱 bKash</option>
+                        <option value="card">💳 Card</option>
+                      </select>
+                      {errors.paymentMethod && <p className="text-xs text-red-500">{errors.paymentMethod.message}</p>}
+                      <input type="hidden" {...register("paymentMethod")} />
                     </div>
-                    {errors.paymentMethod && <p className="text-xs text-red-500">{errors.paymentMethod.message}</p>}
-                    <input type="hidden" {...register("paymentMethod")} />
                   </div>
 
-                  <Textarea label="Additional Notes (optional)" rows={2} {...register("notes")} />
+                  <Textarea label="Notes / Special Requirements (optional)" rows={3} {...register("notes")} />
 
                   <Button type="submit" size="lg" fullWidth isLoading={isSubmitting}>
                     Confirm Transport Booking

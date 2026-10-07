@@ -407,6 +407,16 @@ export default function OtherServiceDetailContent({ params }: { params: Promise<
                     ))}
                   </ul>
                 )}
+                {!isStatic && !hasPackages && (() => {
+                  const lines = description.split("\n");
+                  const lastBulletIdx = lines.map((l, i) => l.trim().startsWith("•") ? i : -1).filter(i => i !== -1).pop() ?? -1;
+                  const bottomText = lastBulletIdx !== -1 ? lines.slice(lastBulletIdx + 1).join("\n").trim() : "";
+                  if (bottomText) return null;
+                  const fallback = language === "en"
+                    ? "Our team is available to assist you. Contact us to learn more or book this service today."
+                    : "আমাদের টিম আপনাকে সহায়তা করতে প্রস্তুত। আজই যোগাযোগ করুন বা এই সেবাটি বুক করুন।";
+                  return <p className="mt-4 text-slate-600 leading-relaxed text-justify text-sm">{fallback}</p>;
+                })()}
                 {!isStatic && !hasPackages && (
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Link href={`/book-service?service=${slug}`} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#16a34a" }}>
