@@ -155,7 +155,7 @@ function BookServiceInner() {
     });
   }, [isBn]);
 
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
@@ -188,11 +188,15 @@ function BookServiceInner() {
       setPackageError(isBn ? "অনুগ্রহ করে একটি প্যাকেজ বেছে নিন" : "Please select a package");
       return;
     }
-    const amount = selectedPackage
+    const unitPrice = selectedPackage
       ? pricingPeriod === "daily" ? selectedPackage.dailyPrice
       : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice
       : selectedPackage.monthlyPrice
       : 0;
+
+    // Calculate total: unitPrice × qty based on pricingPeriod
+    const qty = data.serviceDays ?? 1;
+    const amount = selectedPackage ? unitPrice * qty : 0;
 
     const booking = await api.post<{ data: { id: string } }>("/bookings", {
       ...data,
@@ -360,16 +364,7 @@ function BookServiceInner() {
                     </div>
                   </div>
 
-                  {/* 1b. Service Days */}
-                  <Input
-                    label={isBn ? "সেবা কত দিন দরকার?" : "How many days do you need the service?"}
-                    type="number"
-                    required
-                    min={1}
-                    placeholder={isBn ? "যেমন: 7" : "e.g. 7"}
-                    error={errors.serviceDays?.message}
-                    {...register("serviceDays", { valueAsNumber: true })}
-                  />
+                  {/* 1b. Service Days — moved before date */}
 
                   {/* 2. Package selection */}
                   {currentPackages.length > 0 && (
@@ -423,15 +418,65 @@ function BookServiceInner() {
                       </div>
                       {packageError && <p className="text-xs text-red-500">{packageError}</p>}
                       {selectedPackage && (
-                        <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 border-2" style={{ backgroundColor: PRIMARY, borderColor: PRIMARY }}>
-                          <span className="text-sm font-semibold text-white">{isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <span className="opacity-80">{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</span></span>
-                          <span className="text-lg font-extrabold text-white">৳{(pricingPeriod === "daily" ? selectedPackage.dailyPrice : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice : selectedPackage.monthlyPrice).toLocaleString()}</span>
+                        <div className="mt-1 flex flex-col gap-1 rounded-xl px-4 py-3 border-2" style={{ backgroundColor: PRIMARY, borderColor: PRIMARY }}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-white">{isBn ? "নির্বাচিত প্যাকেজ:" : "Selected:"} <span className="opacity-80">{isBn ? selectedPackage.nameBn : selectedPackage.nameEn}</span></span>
+                            <span className="text-xs text-blue-200 opacity-80">
+                              ৳{(pricingPeriod === "daily" ? selectedPackage.dailyPrice : pricingPeriod === "weekly" ? selectedPackage.weeklyPrice : selectedPackage.monthlyPrice).toLocaleString()}
+                              {" × "}
+                              {(() => {
+                                const raw = watch("serviceDays");
+                                const qty = !raw || isNaN(raw) ? null : raw;
+                                if (pricingPeriod === "daily")
+                                  return `${qty ?? "?"} ${isBn ? "দিন" : "days"}`;
+                                if (pricingPeriod === "weekly")
+                                  return `${qty ? qty : "?"} ${isBn ? "সপ্তাহ" : "weeks"}`;
+                                return `${qty ? qty : "?"} ${isBn ? "মাস" : "months"}`;
+                              })()}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between border-t border-white/20 pt-1 mt-0.5">
+                            <span className="text-xs text-blue-200">{isBn ? "মোট পরিমাণ" : "Total Amount"}</span>
+                            <span className="text-lg font-extrabold text-white">
+                              {(() => {
+                                const raw = watch("serviceDays");
+                                const qty = !raw || isNaN(raw) ? null : raw;
+                                if (!qty) return "৳—";
+                                const total =
+                                  pricingPeriod === "daily"
+                                    ? selectedPackage.dailyPrice * qty
+                                    : pricingPeriod === "weekly"
+                                    ? selectedPackage.weeklyPrice * qty
+                                    : selectedPackage.monthlyPrice * qty;
+                                return `৳${total.toLocaleString()}`;
+                              })()}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* 3. Date & Time */}
+                  {/* 3. Service Days + Date & Time */}
+                  <Input
+                    label={
+                      currentPackages.length > 0
+                        ? pricingPeriod === "daily"
+                          ? (isBn ? "সেবা কত দিন দরকার?" : "How many days do you need?")
+                          : pricingPeriod === "weekly"
+                          ? (isBn ? "সেবা কত সপ্তাহ দরকার?" : "How many weeks do you need?")
+                          : (isBn ? "সেবা কত মাস দরকার?" : "How many months do you need?")
+                        : (isBn ? "সেবা কত দিন দরকার?" : "How many days do you need the service?")
+                    }
+                    type="number"
+                    required
+                    min={1}
+                    placeholder={isBn ? "যেমন: ৭" : "e.g. 7"}
+                    error={errors.serviceDays?.message}
+                    {...register("serviceDays", { valueAsNumber: true })}
+                  />
+
+                  {/* Date & Time */}
                   <div className="grid grid-cols-2 gap-4">
                     <Input label={f.date} type="date" required error={errors.date?.message} {...register("date")} />
                     <Input label={f.time} type="time" required error={errors.time?.message} {...register("time")} />

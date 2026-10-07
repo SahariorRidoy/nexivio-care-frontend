@@ -245,9 +245,9 @@ export const en = {
     title: "Book a Service",
     subtitle: "Fill in the details and we will confirm your booking shortly",
     form: {
-      name: "Full Name",
+      name: "Booker's Full Name",
       phone: "Phone Number",
-      address: "Full Address",
+      address: "Service Location Address",
       patientName: "Patient Name",
       patientGender: "Patient Gender",
       relationship: "Relationship with Patient",
