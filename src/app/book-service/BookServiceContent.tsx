@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle, Phone, Clock, ShieldCheck, Star, CalendarDays, MapPin, CreditCard } from "lucide-react";
+import { CheckCircle, Phone, Clock, ShieldCheck, Star, CalendarDays, MapPin } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { api } from "@/lib/api";
@@ -94,7 +94,7 @@ function BookServiceInner() {
   const searchParams = useSearchParams();
   const preselected = searchParams.get("service") ?? "";
   const [submitted, setSubmitted] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [selectedPayment, setSelectedPayment] = useState<string>("cash");
   const [serviceGroups, setServiceGroups] = useState<{ label: string; options: { value: string; label: string }[] }[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [packagesMap, setPackagesMap] = useState<ServiceMap>({});
@@ -157,6 +157,7 @@ function BookServiceInner() {
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: { paymentMethod: "cash" },
   });
 
   const [selectedService, setSelectedService] = useState<string>(preselected);
@@ -536,32 +537,23 @@ function BookServiceInner() {
                   </div>
 
                   {/* 7. Payment */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
                     <label className="text-base font-bold text-nav-DEFAULT">
                       {f.paymentMethod} <span className="text-red-500">*</span>
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {PAYMENT_METHODS.map(({ value, label, color, bg }) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => {
-                            setSelectedPayment(value);
-                            setValue("paymentMethod", value as FormData["paymentMethod"], { shouldValidate: true });
-                          }}
-                          className="flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl border-2 text-xs font-semibold transition-all"
-                          style={selectedPayment === value
-                            ? { borderColor: color, backgroundColor: bg, color }
-                            : { borderColor: "#e2e8f0", backgroundColor: "#fff", color: "#64748b" }
-                          }
-                        >
-                          <CreditCard size={16} style={{ color: selectedPayment === value ? color : "#94a3b8" }} />
-                          {label}
-                        </button>
+                    <select
+                      className="h-10 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                      {...register("paymentMethod")}
+                      onChange={(e) => {
+                        register("paymentMethod").onChange(e);
+                        setSelectedPayment(e.target.value);
+                      }}
+                    >
+                      {PAYMENT_METHODS.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
                       ))}
-                    </div>
+                    </select>
                     {errors.paymentMethod && <p className="text-xs text-red-500">{errors.paymentMethod.message}</p>}
-                    <input type="hidden" {...register("paymentMethod")} />
                   </div>
 
                   <Button type="submit" size="lg" fullWidth isLoading={isSubmitting}>

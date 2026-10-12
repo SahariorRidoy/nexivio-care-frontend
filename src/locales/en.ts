@@ -279,6 +279,7 @@ export const en = {
       education: "Educational Qualification",
       cv: "Upload CV (PDF)",
       nid: "Upload NID (Image)",
+      experienceCert: "Experience Certificate (Image, optional)",
       submit: "Submit Application",
     },
     success: "Your application has been submitted successfully! We will contact you soon.",

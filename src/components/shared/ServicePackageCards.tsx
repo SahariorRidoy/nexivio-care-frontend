@@ -58,7 +58,7 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
     const b = parseInt(color.slice(5, 7), 16);
     return g > r && g > b && g > 100;
   })();
-  const standardBg = isGreenBg ? "#1e40af" : LOGO_GREEN;
+  const standardBg = isGreenBg ? "#0891B2" : LOGO_GREEN;
   const standardAccent = LOGO_GREEN;
 
   const tierBg: Record<string, string> = {
@@ -143,22 +143,12 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                     style={{ backgroundColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)" }}
                   >
                     <ul className="flex flex-col gap-2">
-                      {allFeatures.map((f, i) => {
-                        const included = pkg.includedFeatures.includes(f);
-                        return (
-                          <li key={i} className={`flex items-start gap-2 text-sm ${
-                            included
-                              ? isDark ? "text-white font-semibold" : "text-green-950 font-semibold"
-                              : isDark ? "text-white/30" : "text-green-900/50"
-                          }`}>
-                            {included
-                              ? <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: isDark ? "#86efac" : "#22c55e" }} />
-                              : <span className="shrink-0 mt-0.5 text-red-400">✕</span>
-                            }
-                            {featureLabelMap.get(f) ?? f}
-                          </li>
-                        );
-                      })}
+                      {allFeatures.filter((f) => pkg.includedFeatures.includes(f)).map((f, i) => (
+                        <li key={i} className={`flex items-start gap-2 text-sm ${isDark ? "text-white font-semibold" : "text-green-950 font-semibold"}`}>
+                          <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: isDark ? "#86efac" : "#22c55e" }} />
+                          {featureLabelMap.get(f) ?? f}
+                        </li>
+                      ))}
                     </ul>
                   </div>
 

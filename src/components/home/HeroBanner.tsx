@@ -2,14 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Phone, MessageCircle, Bell, FileText, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MessageCircle, Bell, FileText, ArrowRight, CalendarCheck } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { cn, assetUrl, downloadFile } from "@/lib/utils";
 import { api } from "@/lib/api";
 import type { Notice } from "@/types";
-
-type BannerType = "offer" | "campaign" | "training" | "service";
 
 interface Banner {
   id: string;
@@ -18,45 +16,10 @@ interface Banner {
   subtitleBn: string | null;
   subtitleEn: string | null;
   image: string;
-  ctaLink: string | null;
-  type?: BannerType;
+  subtitleStyle?: string;
   isActive: boolean;
   order: number;
 }
-
-const TYPE_BADGES: Record<BannerType, { label: string; className: string }> = {
-  offer:    { label: "Running Offer",          className: "bg-red-500 text-white" },
-  campaign: { label: "Promotional Campaign",   className: "bg-orange-500 text-white" },
-  training: { label: "Training Announcement",  className: "bg-blue-600 text-white" },
-  service:  { label: "Care Service Promotion", className: "bg-green-600 text-white" },
-};
-
-const FALLBACK_SLIDES: Banner[] = [
-  {
-    id: "1", titleBn: "আপনার প্রিয়জনের যত্নে আমরা আছি পাশে",
-    titleEn: "We Are Here For Your Loved Ones",
-    subtitleBn: "সারা বাংলাদেশে বিশ্বস্ত কেয়ারগিভিং, নার্সিং ও বেবি কেয়ার সেবা প্রদান করি",
-    subtitleEn: "Trusted caregiving, nursing and baby care services across Bangladesh",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&q=85&auto=format&fit=crop",
-    ctaLink: "/book-service", isActive: true, order: 1,
-  },
-  {
-    id: "2", titleBn: "প্রশিক্ষিত ও যাচাইকৃত কেয়ারগিভার",
-    titleEn: "Trained & Verified Caregivers",
-    subtitleBn: "আমাদের সকল কর্মী পেশাদারভাবে প্রশিক্ষিত এবং যাচাইকৃত",
-    subtitleEn: "All our staff are professionally trained and verified",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=85&auto=format&fit=crop",
-    ctaLink: "/services", isActive: true, order: 2,
-  },
-  {
-    id: "3", titleBn: "প্রশিক্ষণ কোর্সে ভর্তি চলছে",
-    titleEn: "Training Course Enrollment Open",
-    subtitleBn: "কেয়ারগিভার, নার্সিং ও বেবি কেয়ার প্রশিক্ষণে যোগ দিন",
-    subtitleEn: "Join our caregiver, nursing and baby care training programs",
-    image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1200&q=85&auto=format&fit=crop",
-    ctaLink: "/training", isActive: true, order: 3,
-  },
-];
 
 const typeConfig: Record<string, { labelBn: string; labelEn: string; bg: string }> = {
   job:      { labelBn: "নতুন",   labelEn: "New",    bg: "bg-green-500" },
@@ -66,10 +29,12 @@ const typeConfig: Record<string, { labelBn: string; labelEn: string; bg: string 
 };
 
 export default function HeroBanner() {
-  const [slides, setSlides] = useState<Banner[]>(FALLBACK_SLIDES);
+  const [slides, setSlides] = useState<Banner[]>([]);
+  const [loadingBanners, setLoadingBanners] = useState(true);
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [notices, setNotices] = useState<Notice[]>([]);
+  const [typedText, setTypedText] = useState("");
   const s = useSettings();
   const { language, t } = useLanguage();
   const isBn = language === "bn";
@@ -82,7 +47,8 @@ export default function HeroBanner() {
         const active: Banner[] = (json?.data ?? []).filter((b: Banner) => b.isActive);
         if (active.length > 0) setSlides(active);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoadingBanners(false));
     api.get<{ data: Notice[] }>("/notices")
       .then((r) => setNotices(r.data.filter((n) => n.isActive).slice(0, 6)))
       .catch(() => {});
@@ -99,13 +65,29 @@ export default function HeroBanner() {
   );
 
   useEffect(() => {
-    const timer = setInterval(() => goTo(current + 1), 5500);
+    const timer = setInterval(() => goTo(current + 1), 12000);
     return () => clearInterval(timer);
   }, [current, goTo]);
 
   const slide = slides[current];
-  const title    = isBn ? slide.titleBn    : slide.titleEn;
-  const subtitle = isBn ? (slide.subtitleBn ?? slide.subtitleEn) : (slide.subtitleEn ?? slide.subtitleBn);
+  const title    = isBn ? slide?.titleBn    : slide?.titleEn;
+  const subtitle = isBn ? (slide?.subtitleBn ?? slide?.subtitleEn) : (slide?.subtitleEn ?? slide?.subtitleBn);
+  const subtitleStyle = slide?.subtitleStyle ?? "static";
+
+  // Typing effect
+  useEffect(() => {
+    if (subtitleStyle !== "typing" || !subtitle) { setTypedText(subtitle ?? ""); return; }
+    setTypedText("");
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedText(subtitle.slice(0, i));
+      if (i >= subtitle.length) clearInterval(timer);
+    }, 40);
+    return () => clearInterval(timer);
+  }, [subtitle, subtitleStyle, current]);
+
+  if (!slide && !loadingBanners) return null;
 
   return (
     <section className="bg-gray-100">
@@ -193,7 +175,21 @@ export default function HeroBanner() {
           </div>
 
           {/* ── RIGHT: Slider (3/4) ────────────────────────────────────── */}
-          <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last" style={{ minHeight: "420px" }}>
+          {loadingBanners ? (
+            <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-video bg-slate-200 animate-pulse">
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-300/60 to-transparent" />
+              <div className="absolute bottom-8 left-8 lg:left-10 flex flex-col gap-3">
+                <div className="h-6 w-32 rounded-full bg-slate-300" />
+                <div className="h-10 w-80 rounded-lg bg-slate-300" />
+                <div className="h-4 w-64 rounded bg-slate-300" />
+                <div className="flex gap-3 mt-2">
+                  <div className="h-10 w-32 rounded-xl bg-slate-300" />
+                  <div className="h-10 w-28 rounded-xl bg-slate-300" />
+                </div>
+              </div>
+            </div>
+          ) : (
+          <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-video">
             {/* Background image */}
             <div
               className={cn("absolute inset-0 bg-cover bg-center transition-opacity duration-500", animating ? "opacity-0" : "opacity-100")}
@@ -203,42 +199,49 @@ export default function HeroBanner() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
 
             {/* Content */}
-            <div className={cn("relative h-full flex flex-col justify-end p-8 lg:p-10 transition-opacity duration-400", animating ? "opacity-0" : "opacity-100")} style={{ minHeight: "420px" }}>
-              {slide.type && TYPE_BADGES[slide.type] && (
-                <span className={`self-start text-xs font-bold px-3 py-1 rounded-full mb-3 ${TYPE_BADGES[slide.type].className}`}>
-                  {TYPE_BADGES[slide.type].label}
-                </span>
-              )}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-3 max-w-xl drop-shadow-lg">
+            <div className={cn("relative h-full flex flex-col justify-end p-4 sm:p-8 lg:p-10 transition-opacity duration-400", animating ? "opacity-0" : "opacity-100")}>
+              <h1 className="text-xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-1.5 sm:mb-3 max-w-xl drop-shadow-lg text-green-400">
                 {title}
               </h1>
-              {subtitle && (
-                <p className="text-white/80 text-sm lg:text-base max-w-lg mb-6 leading-relaxed">
+              {subtitle && subtitleStyle === "marquee" && (
+                <div className="overflow-hidden mb-3 sm:mb-6 max-w-lg">
+                  <p className="whitespace-nowrap text-white text-xs sm:text-base animate-marquee bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+                    {subtitle}
+                  </p>
+                </div>
+              )}
+              {subtitle && subtitleStyle === "typing" && (
+                <p className="inline-block text-white text-xs sm:text-base max-w-lg mb-3 sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+                  {typedText}<span className="animate-pulse">|</span>
+                </p>
+              )}
+              {subtitle && subtitleStyle === "static" && (
+                <p className="inline-block text-white text-xs sm:text-base max-w-lg mb-3 sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                   {subtitle}
                 </p>
               )}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <a
                   href={`tel:${s.phone}`}
-                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
                 >
-                  <Phone size={15} /> {s.phone}
+                  <Phone size={13} />
+                  <span className="hidden sm:inline">{s.phone}</span><span className="sm:hidden">{isBn ? "কল" : "Call"}</span>
                 </a>
                 <a
                   href={`https://wa.me/${s.whatsapp}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                  className="flex items-center gap-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
                 >
-                  <MessageCircle size={15} /> WhatsApp
+                  <MessageCircle size={13} /> WhatsApp
                 </a>
-                {slide.ctaLink && (
-                  <Link
-                    href={slide.ctaLink}
-                    className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg"
-                  >
-                    {t.common.bookService}
-                  </Link>
-                )}
+                <Link
+                  href="/book-service"
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white whitespace-nowrap"
+                  style={{ background: "#0C2468" }}
+                >
+                  <CalendarCheck size={13} /> {t.common.bookService}
+                </Link>
               </div>
             </div>
 
@@ -272,6 +275,7 @@ export default function HeroBanner() {
               {current + 1} / {slides.length}
             </div>
           </div>
+          )}
 
         </div>
       </div>
