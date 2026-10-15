@@ -85,13 +85,6 @@ export default function ContactContent() {
       external: true,
       color: "#1877f2", bg: "#eff6ff",
     },
-    {
-      icon: Clock,
-      labelEn: "Business Hours", labelBn: "সেবার সময়",
-      value: s.businessHours ?? (isBn ? "সকাল ৯টা – রাত ৯টা" : "9 AM – 9 PM"),
-      href: null,
-      color: "#7c3aed", bg: "#f5f3ff",
-    },
   ];
 
   const socialLinks = [
@@ -145,7 +138,6 @@ export default function ContactContent() {
             <div className="flex flex-col gap-5">
               <div className="grid grid-cols-2 gap-3">
                 {contactMethods.map(({ icon: Icon, labelEn, labelBn, value, href, external, color, bg }) => {
-                  const isHours = labelEn === "Business Hours";
                   const inner = (
                     <div className="flex items-start gap-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-3 h-full">
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: bg }}>
@@ -163,17 +155,31 @@ export default function ContactContent() {
                     <div key={labelEn}>{inner}</div>
                   );
                 })}
-                {/* Follow Us card */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-3 flex items-center justify-between gap-3">
-                  <p className="text-xs text-slate-400 font-medium shrink-0">{isBn ? "সোশ্যাল মিডিয়া" : "Follow Us"}</p>
-                  <div className="flex gap-1.5">
-                    {socialLinks.map(({ icon: SIcon, href: sHref, label: sLabel, color: sColor }) => (
-                      <a key={sLabel} href={sHref} target="_blank" rel="noopener noreferrer" aria-label={sLabel}
-                        className="w-9 h-9 rounded-lg flex items-center justify-center hover:scale-110 transition-transform"
-                        style={{ backgroundColor: `${sColor}15`, color: sColor }}>
-                        <SIcon size={18} />
-                      </a>
-                    ))}
+
+                {/* Business Hours + Follow Us — side by side full row */}
+                <div className="col-span-2 flex gap-3">
+                  {/* Business Hours */}
+                  <div className="flex items-start gap-3 bg-white rounded-xl border border-gray-100 shadow-sm p-3 flex-1">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "#f5f3ff" }}>
+                      <Clock size={16} style={{ color: "#7c3aed" }} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400 font-medium">{isBn ? "সেবার সময়" : "Business Hours"}</p>
+                      <p className="text-xs font-semibold text-slate-800 break-words">{s.businessHours ?? (isBn ? "সকাল ৯টা – রাত ৯টা" : "9 AM – 9 PM")}</p>
+                    </div>
+                  </div>
+                  {/* Follow Us */}
+                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 flex flex-col gap-2 flex-1">
+                    <p className="text-xs text-slate-400 font-medium">{isBn ? "সোশ্যাল মিডিয়া" : "Follow Us"}</p>
+                    <div className="flex gap-1.5">
+                      {socialLinks.map(({ icon: SIcon, href: sHref, label: sLabel, color: sColor }) => (
+                        <a key={sLabel} href={sHref} target="_blank" rel="noopener noreferrer" aria-label={sLabel}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center hover:scale-110 transition-transform"
+                          style={{ backgroundColor: `${sColor}15`, color: sColor }}>
+                          <SIcon size={16} />
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

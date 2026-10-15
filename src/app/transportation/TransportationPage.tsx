@@ -55,27 +55,27 @@ export default function TransportationPage() {
       </div>
 
       {/* Categories */}
-      <section className="bg-white py-14">
+      {/* <section className="bg-white py-14">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold text-slate-800">Our Transport Categories</h2>
             <p className="text-slate-500 mt-2 text-sm">Choose the service that fits your need</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {CATEGORIES.map((cat) => (
-              <div key={cat.label} className="flex items-center gap-4 p-5 rounded-2xl border border-slate-100 hover:border-primary-300 hover:shadow-lg transition-all cursor-pointer group bg-white">
-                <div className="w-14 h-14 rounded-2xl bg-primary-50 flex items-center justify-center shrink-0 group-hover:bg-primary-100 transition-colors">
-                  <cat.icon size={26} className="text-primary-700" />
+              <div key={cat.label} className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:border-primary-300 hover:shadow-lg transition-all cursor-pointer group bg-white">
+                <div className="w-11 h-11 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 group-hover:bg-primary-100 transition-colors">
+                  <cat.icon size={22} className="text-primary-700" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-bold text-slate-800 leading-tight">{cat.label}</p>
-                  <p className="text-xs text-slate-400 mt-1">{cat.desc}</p>
+                  <p className="text-xs text-slate-400 mt-0.5 truncate">{cat.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Vehicle Types */}
       <section className="bg-slate-50 py-14">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle, Info } from "lucide-react";
+import { ArrowRight, CheckCircle, ChevronRight, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import type { ServicePackage } from "@/types";
 
@@ -168,10 +168,11 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
                   <div className="px-4 pb-5">
                     <Link
                       href={`/book-service?service=${slug}`}
-                      className="block text-center py-2.5 rounded text-sm font-bold text-white transition-colors hover:opacity-90"
+                      className="flex items-center justify-center gap-1 py-2.5 rounded text-sm font-bold text-white transition-colors hover:opacity-90"
                       style={{ backgroundColor: bg === LOGO_GREEN ? LOGO_NAVY : "#43a047" }}
                     >
                       {language === "en" ? "Get Now" : "এখনই নিন"}
+                      <ArrowRight size={16} />
                     </Link>
                   </div>
                 </div>

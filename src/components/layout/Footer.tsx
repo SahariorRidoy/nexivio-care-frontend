@@ -221,31 +221,47 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* 5 — QR Code + Location / Map */}
-          <div>
-            <h3 className="mb-4 text-sm font-bold text-white">{t.contact.info.phone !== "Phone" ? "আমাদের অবস্থান" : "Our Location"}</h3>
-            {s.qrImageUrl && (
+          {/* 5 — QR Code (small screens only) */}
+          {s.qrImageUrl && (
+            <div className="lg:hidden">
+              <h3 className="mb-4 text-sm font-bold text-white">{t.contact.info.phone !== "Phone" ? "আমাদের অবস্থান" : "Our Location"}</h3>
               <div className="mb-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={s.qrImageUrl} alt="QR Code" className="h-20 w-20 rounded-lg border border-slate-700 object-contain bg-white p-1" />
                 <p className="text-xs text-slate-500 mt-1">{t.footer.scanQR}</p>
               </div>
-            )}
-            <div className="rounded-lg overflow-hidden h-36 border border-slate-700">
-              <iframe
-                src={s.mapEmbedUrl ?? "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233667.8223914956!2d90.27923698!3d23.7806207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087026b81%3A0x8fa563bbdd5904c2!2sDhaka!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"}
-                width="100%" height="100%"
-                style={{ border: 0 }}
-                allowFullScreen loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Nexivio Care Location"
-              />
             </div>
-            <Link href="/contact" className="mt-1.5 inline-block text-xs text-primary-400 hover:text-primary-300">
-              {t.nav.contact} →
-            </Link>
-          </div>
+          )}
 
+        </div>
+
+        {/* Full-width map row — large screens */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-white">{t.contact.info.phone !== "Phone" ? "আমাদের অবস্থান" : "Our Location"}</h3>
+            <div className="flex items-center gap-4">
+              {s.qrImageUrl && (
+                <div className="hidden lg:flex items-center gap-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={s.qrImageUrl} alt="QR Code" className="h-10 w-10 rounded border border-slate-700 object-contain bg-white p-0.5" />
+                  <p className="text-xs text-slate-500">{t.footer.scanQR}</p>
+                </div>
+              )}
+              <Link href="/contact" className="text-xs text-primary-400 hover:text-primary-300">
+                {t.nav.contact} →
+              </Link>
+            </div>
+          </div>
+          <div className="rounded-lg overflow-hidden h-36 lg:h-56 border border-slate-700">
+            <iframe
+              src={s.mapEmbedUrl ?? `https://maps.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
+              width="100%" height="100%"
+              style={{ border: 0, minHeight: "144px" }}
+              allowFullScreen loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Nexivio Care Location"
+            />
+          </div>
         </div>
       </div>
 
@@ -253,13 +269,7 @@ export default function Footer() {
       <div className="border-t border-slate-800 py-4">
         <div className="container mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
           <span>© {year} Nexivio Care. All Rights Reserved.</span>
-          <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="hover:text-primary-400 transition-colors">{t.footer.privacyPolicy}</Link>
-            <span>·</span>
-            <Link href="/terms-conditions" className="hover:text-primary-400 transition-colors">{t.footer.termsConditions}</Link>
-            <span>·</span>
-            <a href="https://techgeniuslabs.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">Design & Development: Tech Genius Labs</a>
-          </div>
+          <a href="https://techgeniuslabs.com.bd" target="_blank" rel="noopener noreferrer" className="transition-colors">Design & Development: <span className="text-green-400 hover:text-green-600">Tech Genius Labs</span></a>
         </div>
       </div>
     </footer>

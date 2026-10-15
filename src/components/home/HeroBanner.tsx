@@ -87,6 +87,16 @@ export default function HeroBanner() {
     return () => clearInterval(timer);
   }, [subtitle, subtitleStyle, current]);
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.touches[0].clientX);
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const diff = touchStart - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+    setTouchStart(null);
+  };
+
   if (!slide && !loadingBanners) return null;
 
   return (
@@ -176,7 +186,7 @@ export default function HeroBanner() {
 
           {/* ── RIGHT: Slider (3/4) ────────────────────────────────────── */}
           {loadingBanners ? (
-            <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-video bg-slate-200 animate-pulse">
+            <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-[4/3] sm:aspect-video bg-slate-200 animate-pulse">
               <div className="absolute inset-0 bg-gradient-to-r from-slate-300/60 to-transparent" />
               <div className="absolute bottom-8 left-8 lg:left-10 flex flex-col gap-3">
                 <div className="h-6 w-32 rounded-full bg-slate-300" />
@@ -189,7 +199,10 @@ export default function HeroBanner() {
               </div>
             </div>
           ) : (
-          <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-video">
+          <div className="relative w-full lg:w-3/4 rounded-2xl overflow-hidden shadow-xl order-first lg:order-last aspect-[4/3] sm:aspect-video cursor-pointer"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Background image */}
             <div
               className={cn("absolute inset-0 bg-cover bg-center transition-opacity duration-500", animating ? "opacity-0" : "opacity-100")}
@@ -199,45 +212,45 @@ export default function HeroBanner() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
 
             {/* Content */}
-            <div className={cn("relative h-full flex flex-col justify-end p-4 sm:p-8 lg:p-10 transition-opacity duration-400", animating ? "opacity-0" : "opacity-100")}>
-              <h1 className="text-xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-1.5 sm:mb-3 max-w-xl drop-shadow-lg text-green-400">
+            <div className={cn("relative h-full flex flex-col justify-end px-4 pb-16 pt-4 sm:pb-8 sm:p-8 lg:p-10 transition-opacity duration-400", animating ? "opacity-0" : "opacity-100")}>
+              <h1 className="text-lg sm:text-4xl lg:text-5xl font-bold leading-tight mb-1.5 sm:mb-3 max-w-xl drop-shadow-lg text-green-400">
                 {title}
               </h1>
               {subtitle && subtitleStyle === "marquee" && (
-                <div className="overflow-hidden mb-3 sm:mb-6 max-w-lg">
+                <div className="overflow-hidden sm:mb-6 max-w-lg">
                   <p className="whitespace-nowrap text-white text-xs sm:text-base animate-marquee bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                     {subtitle}
                   </p>
                 </div>
               )}
               {subtitle && subtitleStyle === "typing" && (
-                <p className="inline-block text-white text-xs sm:text-base max-w-lg mb-3 sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+                <p className="inline-block text-white text-xs sm:text-base max-w-lg sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                   {typedText}<span className="animate-pulse">|</span>
                 </p>
               )}
               {subtitle && subtitleStyle === "static" && (
-                <p className="inline-block text-white text-xs sm:text-base max-w-lg mb-3 sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+                <p className="inline-block text-white text-xs sm:text-base max-w-lg sm:mb-6 leading-relaxed bg-black/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                   {subtitle}
                 </p>
               )}
-              <div className="flex items-center gap-2 sm:gap-3">
+              {/* Buttons: hidden on mobile (shown as absolute below), visible on sm+ */}
+              <div className="hidden sm:flex items-center gap-3 mt-0">
                 <a
                   href={`tel:${s.phone}`}
-                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
                 >
-                  <Phone size={13} />
-                  <span className="hidden sm:inline">{s.phone}</span><span className="sm:hidden">{isBn ? "কল" : "Call"}</span>
+                  <Phone size={13} /> {s.phone}
                 </a>
                 <a
                   href={`https://wa.me/${s.whatsapp}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+                  className="flex items-center gap-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
                 >
                   <MessageCircle size={13} /> WhatsApp
                 </a>
                 <Link
                   href="/book-service"
-                  className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-white whitespace-nowrap"
                   style={{ background: "#0C2468" }}
                 >
                   <CalendarCheck size={13} /> {t.common.bookService}
@@ -245,22 +258,46 @@ export default function HeroBanner() {
               </div>
             </div>
 
+            {/* Buttons: mobile only, absolutely pinned to bottom */}
+            <div className={cn("sm:hidden absolute bottom-0 left-0 right-0 z-20 flex items-center justify-center gap-2 px-3 py-2.5 bg-black/40 backdrop-blur-sm transition-opacity duration-400", animating ? "opacity-0" : "opacity-100")}>
+              <a
+                href={`tel:${s.phone}`}
+                className="flex items-center gap-1.5 bg-white/20 border border-white/30 text-white px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap"
+              >
+                <Phone size={12} /> {isBn ? "কল" : "Call"}
+              </a>
+              <a
+                href={`https://wa.me/${s.whatsapp}`}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-green-500/80 text-white px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap"
+              >
+                <MessageCircle size={12} /> WhatsApp
+              </a>
+              <Link
+                href="/book-service"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white whitespace-nowrap"
+                style={{ background: "#0C2468" }}
+              >
+                <CalendarCheck size={12} /> {t.common.bookService}
+              </Link>
+            </div>
+
             {/* Prev / Next */}
             <button
               onClick={() => goTo(current - 1)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 text-white transition-all"
+              className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 h-9 w-9 items-center justify-center rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 text-white transition-all"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={() => goTo(current + 1)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 text-white transition-all"
+              className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 h-9 w-9 items-center justify-center rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 text-white transition-all"
             >
               <ChevronRight size={18} />
             </button>
 
             {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            <div className="absolute bottom-2 right-2 flex gap-2 z-20">
               {slides.map((_, i) => (
                 <button
                   key={i}

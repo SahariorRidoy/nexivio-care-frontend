@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Phone, MessageCircle } from "lucide-react";
+import { ChevronRight, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
@@ -189,6 +189,7 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                       style={{ backgroundColor: "#16a34a" }}
                     >
                       {language === "en" ? "Get Now" : "এখনই নিন"}
+                      <ArrowRight size={16} />
                     </Link>
                     <Link
                       href="/contact"
@@ -240,6 +241,7 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Link href={`/book-service?service=${slug}`} className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: "#16a34a" }}>
                       {language === "en" ? "Get Now" : "এখনই নিন"}
+                      <ArrowRight size={16} />
                     </Link>
                     <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-bold transition-opacity hover:opacity-90" style={{ backgroundColor: PRIMARY }}>
                       <Phone size={16} />{language === "en" ? "Contact Us" : "যোগাযোগ করুন"}
@@ -334,10 +336,11 @@ export default function ServiceDetailContent({ params }: { params: Promise<{ slu
                     <div className="mt-auto pt-2">
                       <Link
                         href={`/services/${s.slug}`}
-                        className="inline-block px-6 py-2.5 rounded-lg text-sm font-black uppercase tracking-wide transition-opacity hover:opacity-90"
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-black uppercase tracking-wide transition-opacity hover:opacity-90"
                         style={{ backgroundColor: "#f5c518", color: "#1a1a1a" }}
                       >
                         {language === "en" ? "View More" : "আরও দেখুন"}
+                        <ArrowRight size={18} />
                       </Link>
                     </div>
                   </div>

@@ -16,12 +16,10 @@ import LanguageSwitch from "@/components/shared/LanguageSwitch";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [otherServicesOpen, setOtherServicesOpen] = useState(false);
-  const [trainingOpen, setTrainingOpen] = useState(false);
+  const [openMobile, setOpenMobile] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [transportationOpen, setTransportationOpen] = useState(false);
+
+  const toggleMobile = (key: string) => setOpenMobile(v => v === key ? null : key);
   const navRef = useRef<HTMLElement>(null);
   const [apiServices, setApiServices] = useState<Service[]>([]);
   const [apiOtherServices, setApiOtherServices] = useState<OtherService[]>([]);
@@ -476,182 +474,173 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── Mobile menu ── */}
+      {/* ── Mobile Drawer Overlay ── */}
       {menuOpen && (
-        <div className="lg:hidden bg-nav border-t border-blue-950">
-          <nav className="flex flex-col">
-            {navLinks.map(link => {
-              const isActive = link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-              if ("megaAbout" in link && link.megaAbout) {
-                return (
-                  <div key={link.href}>
-                    <button
-                      onClick={() => setAboutOpen(v => !v)}
-                      className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
-                    >
-                      {link.label}
-                      <ChevronDown size={14} className={cn("transition-transform", aboutOpen && "rotate-180")} />
-                    </button>
-                    {aboutOpen && (
-                      <div className="bg-nav-active pl-4">
-                        {[
-                          { href: "/about#profile",     label: isBn ? "কোম্পানি প্রোফাইল"   : "Company Profile" },
-                          { href: "/about#mission",     label: isBn ? "আমাদের মিশন"        : "Our Mission" },
-                          { href: "/about#vision",      label: isBn ? "আমাদের ভিশন"        : "Our Vision" },
-                          { href: "/about#future-plan", label: isBn ? "ভবিষ্যৎ পরিকল্পনা" : "Our Future Plan" },
-                          { href: "/about#office",      label: isBn ? "আমাদের অফিস"        : "Our Office" },
-                          { href: "/about#team",        label: isBn ? "ম্যানেজমেন্ট টিম"   : "Management Team" },
-                          { href: "/about#staff",       label: isBn ? "আমাদের কর্মীবৃন্দ"  : "Our Staff" },
-                          { href: "/job-application",   label: isBn ? "চাকরির আবেদন"       : "Job Application" },
-                          { href: "/notice-board",      label: isBn ? "নোটিশ বোর্ড"        : "Notice Board" },
-                        ].map(item => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => setMenuOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white"
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-              if (link.children) {
-                return (
-                  <div key={link.href}>
-                    <button
-                      onClick={() => {
-                        if (link.href === "/services") setServicesOpen(v => !v);
-                        else if (link.href === "/other-services") setOtherServicesOpen(v => !v);
-                        else setTrainingOpen(v => !v);
-                      }}
-                      className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
-                    >
-                      {link.label}
-                      <ChevronDown size={14} className={cn("transition-transform",
-                        (link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && "rotate-180"
-                      )} />
-                    </button>
-                    {(link.href === "/services" ? servicesOpen : link.href === "/other-services" ? otherServicesOpen : trainingOpen) && (
-                      <div className="bg-nav-active pl-4">
-                        {link.children.map(child => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            onClick={() => setMenuOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-              if ("megaTransport" in link && link.megaTransport) {
-                const isActive = pathname.startsWith("/transportation");
-                return (
-                  <div key={link.href}>
-                    <button
-                      onClick={() => setTransportationOpen(v => !v)}
-                      className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white/90"
-                    >
-                      {link.label}
-                      <ChevronDown size={14} className={cn("transition-transform", transportationOpen && "rotate-180")} />
-                    </button>
-                    {transportationOpen && (
-                      <div className="bg-nav-active pl-4">
-                        {/* Highlighted action buttons in mobile */}
-                        <div className="px-4 py-3 flex flex-col gap-2">
-                          <Link
-                            href="/transportation/book"
-                            onClick={() => setMenuOpen(false)}
-                            className="block text-center py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors"
-                          >
-                            🚐 {isBn ? "এখনই বুক করুন" : "Book Now"}
-                          </Link>
-                          <Link
-                            href="/transportation/register-vehicle"
-                            onClick={() => setMenuOpen(false)}
-                            className="block text-center py-2 bg-nav-DEFAULT hover:bg-[#13389f] text-white text-sm font-bold rounded-lg transition-colors"
-                          >
-                            🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
-                          </Link>
-                        </div>
-                        <div className="border-t border-white/10">
-                          {TRANSPORT_CATEGORIES.map((cat) => (
-                            <div key={cat.slug}>
-                              <Link
-                                href={cat.href}
-                                onClick={() => setMenuOpen(false)}
-                                className="block px-4 py-2 text-sm font-semibold text-white/90 hover:text-white"
-                              >
-                                {isBn ? cat.labelBn : cat.labelEn}
-                              </Link>
-                              {cat.vehicles.map((v) => (
-                                <Link
-                                  key={v.href}
-                                  href={v.href}
-                                  onClick={() => setMenuOpen(false)}
-                                  className="block pl-6 pr-4 py-1.5 text-xs text-white/60 hover:text-white"
-                                >
-                                  {isBn ? v.labelBn : v.labelEn}
-                                </Link>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className={cn(
-                    "px-4 py-3 text-sm font-medium",
-                    isActive ? "bg-nav-active text-white" : "text-white/90"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-            <div className="p-3 border-t border-blue-900 flex flex-col gap-2">
-              <Link
-                href="/notice-board"
-                onClick={() => setMenuOpen(false)}
-                className={cn("px-4 py-3 text-sm font-medium", pathname === "/notice-board" ? "bg-nav-active text-white" : "text-white/90")}
-              >
-                {isBn ? "নোটিশ" : "Notice"}
-              </Link>
-              <Link
-                href="/job-application"
-                onClick={() => setMenuOpen(false)}
-                className={cn("px-4 py-3 text-sm font-medium", pathname === "/job-application" ? "bg-nav-active text-white" : "text-white/90")}
-              >
-                {isBn ? "চাকরির আবেদন" : "Job Apply"}
-              </Link>
-              <Link
-                href="/book-service"
-                onClick={() => setMenuOpen(false)}
-                className="block text-center py-2.5 bg-primary-600 text-white text-sm font-bold rounded"
-              >
-                {t.common.bookService}
-              </Link>
-            </div>
-          </nav>
-        </div>
+        <div
+          className="lg:hidden fixed inset-0 z-50 bg-black/50"
+          onClick={() => { setMenuOpen(false); setOpenMobile(null); }}
+        />
       )}
+
+      {/* ── Mobile Side Drawer ── */}
+      <div
+        className={cn(
+          "lg:hidden fixed top-0 right-0 z-50 h-full w-3/4 bg-nav shadow-2xl flex flex-col transition-transform duration-300",
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-white/10 shrink-0">
+          <span className="text-white font-bold text-base">{isBn ? "মেনু" : "Menu"}</span>
+          <button
+            onClick={() => { setMenuOpen(false); setOpenMobile(null); }}
+            className="p-1.5 rounded-md text-white/80 hover:bg-white/10"
+            aria-label="Close menu"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        {/* Scrollable nav links */}
+        <nav className="flex flex-col overflow-y-auto flex-1">
+          {navLinks.map(link => {
+            const isActive = link.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(link.href);
+            if ("megaAbout" in link && link.megaAbout) {
+              return (
+                <div key={link.href}>
+                  <button
+                    onClick={() => toggleMobile("about")}
+                    className={cn("w-full flex items-center justify-between px-4 py-3 font-medium", isActive ? "text-green-400 text-base" : "text-white/90 text-sm")}
+                  >
+                    {link.label}
+                    <ChevronDown size={14} className={cn("transition-transform", openMobile === "about" && "rotate-180")} />
+                  </button>
+                  {openMobile === "about" && (
+                    <div className="bg-[#071e52] border-l-2 border-white/10 ml-4 rounded-b-md">
+                      {[
+                        { href: "/about#profile",     label: isBn ? "কোম্পানি প্রোফাইল"   : "Company Profile" },
+                        { href: "/about#mission",     label: isBn ? "আমাদের মিশন"        : "Our Mission" },
+                        { href: "/about#vision",      label: isBn ? "আমাদের ভিশন"        : "Our Vision" },
+                        { href: "/about#future-plan", label: isBn ? "ভবিষ্যৎ পরিকল্পনা" : "Our Future Plan" },
+                        { href: "/about#office",      label: isBn ? "আমাদের অফিস"        : "Our Office" },
+                        { href: "/about#team",        label: isBn ? "ম্যানেজমেন্ট টিম"   : "Management Team" },
+                        { href: "/about#staff",       label: isBn ? "আমাদের কর্মীবৃন্দ"  : "Our Staff" },
+                      ].map(item => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-white/70 hover:text-white"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            if (link.children) {
+              return (
+                <div key={link.href}>
+                  <button
+                    onClick={() => toggleMobile(link.href)}
+                    className={cn("w-full flex items-center justify-between px-4 py-3 font-medium", isActive ? "text-green-400 text-base" : "text-white/90 text-sm")}
+                  >
+                    {link.label}
+                    <ChevronDown size={14} className={cn("transition-transform", openMobile === link.href && "rotate-180")} />
+                  </button>
+                  {openMobile === link.href && (
+                    <div className="bg-[#071e52] border-l-2 border-white/10 ml-4 rounded-b-md">
+                      {link.children.map(child => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-white/70 hover:text-white"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            if ("megaTransport" in link && link.megaTransport) {
+              return (
+                <div key={link.href}>
+                  <button
+                    onClick={() => toggleMobile("transport")}
+                    className={cn("w-full flex items-center justify-between px-4 py-3 font-medium", isActive ? "text-green-400 text-base" : "text-white/90 text-sm")}
+                  >
+                    {link.label}
+                    <ChevronDown size={14} className={cn("transition-transform", openMobile === "transport" && "rotate-180")} />
+                  </button>
+                  {openMobile === "transport" && (
+                    <div className="bg-[#071e52] border-l-2 border-white/10 ml-4 rounded-b-md">
+                      <div className="px-4 py-3 flex flex-col gap-2">
+                        <Link
+                          href="/transportation/book"
+                          onClick={() => setMenuOpen(false)}
+                          className="block text-center py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors"
+                        >
+                          🚐 {isBn ? "এখনই বুক করুন" : "Book Now"}
+                        </Link>
+                        <Link
+                          href="/transportation/register-vehicle"
+                          onClick={() => setMenuOpen(false)}
+                          className="block text-center py-2 bg-nav-DEFAULT hover:bg-[#13389f] text-white text-sm font-bold rounded-lg transition-colors"
+                        >
+                          🚗 {isBn ? "গাড়ি নিবন্ধন করুন" : "Register Your Vehicle"}
+                        </Link>
+                      </div>
+                      <div className="border-t border-white/10">
+                        {TRANSPORT_CATEGORIES.map((cat) => (
+                          <Link
+                            key={cat.slug}
+                            href={cat.href}
+                            onClick={() => setMenuOpen(false)}
+                            className="block px-4 py-2 text-sm font-semibold text-white/90 hover:text-white"
+                          >
+                            {isBn ? cat.labelBn : cat.labelEn}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={cn(
+                  "px-4 py-3 font-medium",
+                  isActive ? "text-green-400 text-base" : "text-white/90 text-sm"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Drawer footer */}
+        <div className="p-3 border-t border-white/10 shrink-0">
+          <Link
+            href="/book-service"
+            onClick={() => setMenuOpen(false)}
+            className="block text-center py-2.5 bg-primary-600 text-white text-sm font-bold rounded"
+          >
+            {t.common.bookService}
+          </Link>
+        </div>
+      </div>
     </header>
   );
 }
