@@ -43,10 +43,13 @@ const CATEGORY_KEYWORDS: Record<Exclude<CategoryKey, "all">, string[]> = {
 };
 
 const CATEGORY_MAP: Record<string, CategoryKey> = {
-  caregiver:  "caregiver",
-  nursing:    "nursing",
-  "elder-care": "elderCare",
-  "nanny-care":  "babyCare",
+  caregiver:        "caregiver",
+  nursing:          "nursing",
+  "elder-care":     "elderCare",
+  "nanny-care":     "babyCare",
+  physiotherapy:    "physiotherapy",
+  onDemandNursing:  "onDemandNursing",
+  homeDiagnostics:  "homeDiagnostics",
 };
 
 function detectCategory(service: Service): CategoryKey {
