@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   CheckCircle, Briefcase, Upload, GraduationCap, ClipboardList,
   ChevronRight, Phone, Star, FileText, CreditCard, Award, User, X,
@@ -9,10 +9,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import PageHeader from "@/components/shared/PageHeader";
 import Button from "@/components/ui/Button";
-
-const SPLASH_IMAGES = [
-  "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&q=85&auto=format&fit=crop",
-];
 
 const PRIMARY = "#0C2468";
 const ACCENT = "#2563eb";
@@ -88,18 +84,8 @@ export default function JobApplicationContent() {
   const [cvFile, setCvFile] = useState<string | null>(null);
   const [nidFile, setNidFile] = useState<string | null>(null);
   const [certFile, setCertFile] = useState<string | null>(null);
-  const [headerImage, setHeaderImage] = useState<string>(SPLASH_IMAGES[0]);
   const f = t.jobApplication.form;
   const isBn = language === "bn";
-
-  useEffect(() => {
-    api.get<{ data: { image: string; isActive: boolean }[] }>("/banners")
-      .then((r) => {
-        const img = r.data.find((b) => b.isActive && b.image)?.image;
-        if (img) setHeaderImage(img);
-      })
-      .catch(() => {});
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -127,7 +113,16 @@ export default function JobApplicationContent() {
 
   return (
     <>
-      <PageHeader title={t.jobApplication.title} subtitle={t.jobApplication.subtitle} bgImage={headerImage} />
+      <div className="container mx-auto max-w-6xl px-4 py-6">
+        <div className="relative">
+          <img src="/images/job%20application.jpeg" alt="Job Application" className="w-full rounded-2xl max-h-96 object-cover" />
+          <div className="absolute inset-0 rounded-2xl bg-black/40 flex flex-col items-center justify-center text-center px-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">{t.jobApplication.title}</h1>
+            {t.jobApplication.subtitle && <p className="mt-2 text-blue-200 text-sm max-w-md">{t.jobApplication.subtitle}</p>}
+            <div className="mt-4 h-0.5 w-12 rounded-full bg-blue-400 mx-auto" />
+          </div>
+        </div>
+      </div>
 
       <section className="bg-gradient-to-b from-slate-50 to-white py-16">
         <div className="container mx-auto max-w-6xl px-4">

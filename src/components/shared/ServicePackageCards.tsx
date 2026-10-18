@@ -227,6 +227,12 @@ export default function ServicePackageCards({ slug, packages, featuresEn = [], f
               ? "Package prices may vary based on the type, duration, and specific requirements of the service requested by the client."
               : "ক্লায়েন্টের চাহিদা অনুযায়ী সেবার ধরন, সময়কাল এবং নির্দিষ্ট প্রয়োজনীয়তার ভিত্তিতে প্যাকেজের মূল্য পরিবর্তিত হতে পারে ।"}
           </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            {language === "en"
+              ? "For 24-hour packages, arrangements must be made for the caregiver's rest and sleep to ensure round-the-clock day and night care."
+              : "২৪ ঘণ্টার প্যাকেজে দিন-রাতের পরিচর্যা নিশ্চিত করতে কর্মীর বিশ্রাম ও ঘুমের ব্যবস্থা রাখতে হবে।"}
+          </li>
         </ul>
       </div>
     </div>

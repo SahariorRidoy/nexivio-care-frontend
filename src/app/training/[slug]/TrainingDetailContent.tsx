@@ -75,16 +75,16 @@ export default function TrainingDetailContent({ params }: { params: Promise<{ sl
       <PageHeader title={title} />
       <section className="bg-white py-16">
         <div className="container mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3" >
 
             {/* ── Left: Course Details ── */}
             <div className="lg:col-span-2">
 
               {/* Image + Duration card side by side */}
-              <div className="flex gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 {training?.image && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={training.image} alt={title} className="w-1/2 aspect-4/3 object-cover rounded-2xl shrink-0" />
+                  <img src={training.image} alt={title} className="w-full sm:w-1/2 aspect-4/3 object-cover rounded-2xl shrink-0" />
                 )}
                 <Card className="flex-1 p-5 flex flex-col justify-center gap-3">
                   <h3 className="font-bold text-sm" style={{ color: PRIMARY }}>
@@ -117,7 +117,7 @@ export default function TrainingDetailContent({ params }: { params: Promise<{ sl
               </div>
 
               {/* Fee, Certificate, Class Type — small cards in a row */}
-              <div className="flex gap-3 mb-10">
+              <div className="grid grid-cols-3 gap-3 mb-10">
                 <Card className="flex-1 flex flex-col items-center gap-1 p-3">
                   <BadgeDollarSign size={18} className="text-primary-600" />
                   <p className="text-xs text-slate-500">{t.training.detail.fee}</p>
@@ -189,7 +189,7 @@ export default function TrainingDetailContent({ params }: { params: Promise<{ sl
 
             {/* ── Right: Enrollment Form ── */}
             <div>
-              <div className="sticky top-24 bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden">
+              <div className="lg:sticky top-24 bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden">
                 <div className="h-1.5 w-full" style={{ backgroundColor: ACCENT }} />
                 <div className="p-6">
                   {enrolled ? (

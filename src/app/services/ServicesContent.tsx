@@ -62,36 +62,7 @@ function detectCategory(service: Service): CategoryKey {
   return "others";
 }
 
-// ─── Static services always shown after dynamic API data ─────────────────────
-const STATIC_SERVICES: (Service & { _category: CategoryKey })[] = [
-  {
-    id: "static-1", slug: "physiotherapy-rehabilitation", icon: "Activity", isActive: true, createdAt: "",
-    nameEn: "Physiotherapy & Rehabilitation Services", nameBn: "ফিজিওথেরাপি ও পুনর্বাসন সেবা",
-    shortDescEn: "Professional physiotherapy and rehabilitation care at home by certified therapists.",
-    shortDescBn: "সার্টিফাইড থেরাপিস্টদের দ্বারা বাড়িতে পেশাদার ফিজিওথেরাপি ও পুনর্বাসন সেবা।",
-    descriptionEn: "", descriptionBn: "",
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop",
-    packages: [], featuresEn: [], featuresBn: [], _category: "physiotherapy",
-  },
-  {
-    id: "static-2", slug: "on-demand-nursing", icon: "Clock", isActive: true, createdAt: "",
-    nameEn: "On-Demand Nursing", nameBn: "অন-ডিমান্ড নার্সিং",
-    shortDescEn: "Flexible, on-demand nursing services available whenever you need them.",
-    shortDescBn: "যখন প্রয়োজন তখনই পাওয়া যায় এমন নমনীয় অন-ডিমান্ড নার্সিং সেবা।",
-    descriptionEn: "", descriptionBn: "",
-    image: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&auto=format&fit=crop",
-    packages: [], featuresEn: [], featuresBn: [], _category: "onDemandNursing",
-  },
-  {
-    id: "static-3", slug: "home-diagnostics", icon: "FlaskConical", isActive: true, createdAt: "",
-    nameEn: "Home Diagnostics", nameBn: "হোম ডায়াগনস্টিক্স",
-    shortDescEn: "Lab tests and diagnostic services conducted at the comfort of your home.",
-    shortDescBn: "আপনার বাড়িতে বসেই ল্যাব টেস্ট ও ডায়াগনস্টিক সেবা গ্রহণ করুন।",
-    descriptionEn: "", descriptionBn: "",
-    image: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=600&auto=format&fit=crop",
-    packages: [], featuresEn: [], featuresBn: [], _category: "homeDiagnostics",
-  },
-];
+
 
 export default function ServicesContent() {
   const { t, language } = useLanguage();
@@ -104,15 +75,10 @@ export default function ServicesContent() {
     api.get<{ data: Service[] }>("/services")
       .then((r) => {
         const active = r.data.filter((s) => s.isActive);
-        const dynamicSlugs = new Set(active.map((s) => s.slug));
-        const merged = [
-          ...active.map((s) => ({ ...s, _category: detectCategory(s) })),
-          ...STATIC_SERVICES.filter((s) => !dynamicSlugs.has(s.slug)),
-        ];
-        setServices(merged);
+        setServices(active.map((s) => ({ ...s, _category: detectCategory(s) })));
         setHeaderImage(active.find((s) => s.image)?.image);
       })
-      .catch(() => setServices(STATIC_SERVICES))
+      .catch(() => setServices([]))
       .finally(() => setLoading(false));
   }, []);
 
