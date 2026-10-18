@@ -33,7 +33,7 @@ export default function Footer() {
 
   const STATIC_SERVICES: Service[] = [
     {
-      id: "static-1", slug: "physiotherapy-rehabilitation", icon: "Activity", isActive: true, createdAt: "",
+      id: "static-1", slug: "physiotherapy-rehabilitation-services", icon: "Activity", isActive: true, createdAt: "",
       nameEn: "Physiotherapy & Rehabilitation", nameBn: "ফিজিওথেরাপি ও পুনর্বাসন",
       shortDescEn: "", shortDescBn: "", descriptionEn: "", descriptionBn: "",
       image: "", packages: [], featuresEn: [], featuresBn: [],

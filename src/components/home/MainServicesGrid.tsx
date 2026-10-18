@@ -10,7 +10,7 @@ import type { Service } from "@/types";
 
 const STATIC_SERVICES: Service[] = [
   {
-    id: "static-1", slug: "physiotherapy-rehabilitation", icon: "Activity", isActive: true, createdAt: "",
+    id: "static-1", slug: "physiotherapy-rehabilitation-services", icon: "Activity", isActive: true, createdAt: "",
     nameEn: "Physiotherapy & Rehabilitation", nameBn: "ফিজিওথেরাপি ও পুনর্বাসন",
     shortDescEn: "Professional physiotherapy and rehabilitation care at home by certified therapists.",
     shortDescBn: "সার্টিফাইড থেরাপিস্টদের দ্বারা বাড়িতে পেশাদার ফিজিওথেরাপি ও পুনর্বাসন সেবা।",
