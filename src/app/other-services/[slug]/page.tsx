@@ -9,7 +9,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const res = await fetch(`${API_URL}/other-services/${slug}`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_URL}/other-services/${slug}`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000),
+    });
     const json = await res.json();
     const s = json?.data;
     if (!s) throw new Error();
